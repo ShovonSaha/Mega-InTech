@@ -206,6 +206,13 @@ for peakStrideIter = 1:n
     end
 end
 
+% Features matrix:
+% Column         Content
+%   1      1st Positive Peak Index
+%   2      2nd Positive Peak Index
+%   3      1st Negative Peak Index
+%   4      Max Magnitude of the Positive Peak
+
 %% Labelling Data based on Features for training the model
 % No Activity = 0
 % 
@@ -215,6 +222,15 @@ end
 % Running = 4
 % 
 % Other = 5
+
+% Features matrix update:
+% Column         Content
+%   1      1st Positive Peak Index
+%   2      2nd Positive Peak Index
+%   3      1st Negative Peak Index
+%   4      Max Magnitude of the Positive Peak
+%   5      Activity-based on Magnitude
+
 runningMagThreshold = 15000;
 
 for peakStrideIter = 1:n
@@ -255,7 +271,16 @@ end
 % Running = 4
 % Other = 5
 
-% A activity needs to be classified for at least FOUR strides before it can be re-classified
+% Features matrix update:
+% Column         Content
+%   1      1st Positive Peak Index
+%   2      2nd Positive Peak Index
+%   3      1st Negative Peak Index
+%   4      Max Magnitude of the Positive Peak
+%   5      Activity-based on Magnitude
+%   6      Threshold-based Activity (Re-classification after 3 consecutive activities
+
+% A activity needs to be classified for at least THREE strides before it can be re-classified
 consecutiveCount = 0;
 classifiedActivity = features(1,5);  % Assuming activity values start from 0
 
@@ -271,7 +296,7 @@ for peakStrideIter = 1:n
             
             if (consecutiveCount >= 3)
                 classifiedActivity = prevActivity;
-                features(peakStrideIter,6) = prevActivity;  % Assign new activity after 4 consecutive occurrences
+                features(peakStrideIter,6) = prevActivity;  % Assign new activity after 3 consecutive occurrences
                 features(peakStrideIter-1,6) = prevActivity;
                 features(peakStrideIter-2,6) = prevActivity;
                 features(peakStrideIter-3,6) = prevActivity;
