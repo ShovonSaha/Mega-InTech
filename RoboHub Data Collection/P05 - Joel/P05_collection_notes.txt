@@ -1,0 +1,28 @@
+P05 Collection Notes
+
+Order
+
+1) Boards on the right - tilt towards the left
+2) Boards on the left - tilt towards the right (impactSense files wouldn't transfer for this condition so we had to redo it after the neutral condition)
+3) Neutral
+4) Boards on the left - tilt towards the right 
+
+Only three files included in folders - order of files by date modified is 
+1) Boards on the right 
+2) Neutral 
+3) Boards on the left
+
+Physilog File Names Corresponding to Collections:
+	Right Foot:
+		1) Boards Right - 10RF2721
+		2) Neutral - 12RF2721
+		3) Boards Left - 13RF2721
+	Left Foot:
+		1) Boards Right - 06LF4205
+		2) Neutral - 08LF4205
+		3) Boards Left - 09LF4205
+		
+Shoe Measurements:
+a) 16 cm
+b) 8 cm
+c) 14 cm

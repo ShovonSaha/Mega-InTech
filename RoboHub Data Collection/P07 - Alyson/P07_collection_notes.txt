@@ -1,0 +1,23 @@
+P07 Collection Notes
+
+Order
+
+1) Neutral
+2) Boards on the left - tilt towards the right
+3) Boards on the right - tilt towards the left
+
+Physilog File Names Corresponding to Collections:
+	Right Foot:
+		1) Neutral - 01RF2721
+		2) Boards Left - 02RF2721
+		3) Boards Right - 03RF2721
+	Left Foot:
+		1) Neutral - 01LF4205
+		2) Boards Left - 02LF4205
+		3) Boards Right - 03LF4205
+
+Shoe measurements:
+
+a) 15.5 cm
+b) 10 cm
+c) 13 cm

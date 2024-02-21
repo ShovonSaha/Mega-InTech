@@ -1,0 +1,31 @@
+P03 collection notes
+
+Order
+
+1) Neutral
+2) Boards Right 
+3) Boards Right01
+4) Boards Right02
+5) Boards Right03 (usable collection for boards right condition)
+6) Boards Left 
+
+Physilog File Names Corresponding to Collections:
+	Right Foot:
+		1) Neutral - 60RF2721
+		2) Boards Right - 61RF2721
+		3) Boards Right01 - 62RF2721
+		4) Boards Right02 - didn't collect physilog
+		5) Boards Right03 (usable collection for boards right condition) - 63RF2721
+		6) Boards Left - 64RF2721
+	Left Foot:
+		1) Neutral - 08LF4205
+		2) Boards Right - 09LF4205
+		3) Boards Right01 - 10LF4205
+		4) Boards Right02 - didn't collect physilog
+		5) Boards Right03 (usable collection for boards right condition) - 11LF4205
+		6) Boards Left - 12LF4205
+		
+Shoe Measurements:
+a) 18 cm
+b) 11 cm
+c) 14.5 cm
