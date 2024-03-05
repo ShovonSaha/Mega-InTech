@@ -1,4 +1,4 @@
-P10 Collection Notes:
+P11 Collection Notes:
 
 Order
 
@@ -16,8 +16,9 @@ Physilog File Names Corresponding to Collections:
 		2) Boards Left - 06LF4205
 		3) Boards Right - 07LF4205
 
-Shoe measurements: Need to be taken
-
+Shoe measurements:
 a) 15.5 cm
 b) 12 cm
 c) 12.5 cm
+
+Shoe size: 8.5 US

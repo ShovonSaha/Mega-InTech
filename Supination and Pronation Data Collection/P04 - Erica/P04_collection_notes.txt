@@ -19,3 +19,5 @@ Shoe Measurements:
 a) 14 cm
 b) 9 cm
 c) 13 cm
+
+Shoe Size: 8

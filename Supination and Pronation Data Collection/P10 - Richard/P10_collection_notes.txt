@@ -1,7 +1,6 @@
-P09 Collection Notes:
+P10 Collection Notes:
 
 First collection for the Neutral position was repeated as one of my markers from the feet fell off. The Physilog data is however kept for reference in the folder called 'Failed Collection - Neutral Position'. Files: 01LF4205 and 01RF2721 are available in the folder.
-
 
 Order
 
@@ -11,16 +10,18 @@ Order
 
 Physilog File Names Corresponding to Collections:
 	Right Foot:
-		1) Neutral - 07RF2721
-		2) Boards Left - 08RF2721
-		3) Boards Right - 09RF2721
+		1) Neutral - 02RF2721
+		2) Boards Left - 03RF2721
+		3) Boards Right - 04RF2721
 	Left Foot:
-		1) Neutral - 10LF4205
-		2) Boards Left - 11LF4205
-		3) Boards Right - 12LF4205
+		1) Neutral - 02LF4205
+		2) Boards Left - 03LF4205
+		3) Boards Right - 04LF4205
 
-Shoe measurements: Need to be taken
+Shoe measurements:
 
-a) 15 cm
+a) 18 cm
 b) 9 cm
 c) 12 cm
+
+Shoe size: 13 US

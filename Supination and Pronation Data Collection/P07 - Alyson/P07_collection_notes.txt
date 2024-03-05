@@ -21,3 +21,5 @@ Shoe measurements:
 a) 15.5 cm
 b) 10 cm
 c) 13 cm
+
+Shoe Size: 10

@@ -8,7 +8,7 @@ close all;
 
 % Just walking strides. Small sample connected for tuning algorithm. Also
 % for Running
-cd 'C:\Users\shovo\OneDrive - University of Waterloo\Documents\NRE Lab\MegaIntech\DATA for Filtration_Stride _Orientation'
+% cd 'C:\Users\shovo\OneDrive - University of Waterloo\Documents\NRE Lab\MegaIntech\DATA for Filtration_Stride _Orientation'
 
 % % Right Walking Combined:
 % cd 'C:\Users\shovo\OneDrive - University of Waterloo\Desktop\Training Data\Walking\Right Walking Data'
@@ -21,6 +21,13 @@ cd 'C:\Users\shovo\OneDrive - University of Waterloo\Documents\NRE Lab\MegaIntec
 
 % % Running and Standing:
 % cd 'C:\Users\shovo\OneDrive - University of Waterloo\Mega Intech Data Collection\25_April_2023\Ramisha\Running and Standing'
+
+
+
+% JULIA's DATA
+
+
+
 
 %% Importing full csv file as a matrix
 
