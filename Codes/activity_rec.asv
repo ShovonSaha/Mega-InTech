@@ -117,7 +117,7 @@ cd 'C:\Users\shovo\OneDrive - University of Waterloo\Documents\NRE Lab\Mega InTe
 % DataFull = readmatrix('Julia_20231206_ImpactSense_HMWM010117Jidf_Right_D8F779651FCC_06122023090957.csv');
 
 % Date: % Julia_20231206
-% Dataset_1: Bethany
+% Dataset_1: 
 DataFull = readmatrix('Julia_20231218_ImpactSense_bethany_Left_EE4623FE1AA4_18122023101143.csv');
 DataFull = readmatrix('Julia_20231218_ImpactSense_bethany_Right_D8F779651FCC_18122023101409.csv');
 
