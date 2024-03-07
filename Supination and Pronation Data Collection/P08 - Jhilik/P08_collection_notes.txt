@@ -22,3 +22,5 @@ Shoe measurements:
 a) 13 cm
 b) 9 cm
 c) 13 cm
+
+Shoe size: 7.5 US

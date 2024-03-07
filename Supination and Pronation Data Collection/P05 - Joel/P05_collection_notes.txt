@@ -26,3 +26,5 @@ Shoe Measurements:
 a) 16 cm
 b) 8 cm
 c) 14 cm
+
+Shoe size: 9.5 US

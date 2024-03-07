@@ -23,13 +23,15 @@ close all;
 % cd 'C:\Users\shovo\OneDrive - University of Waterloo\Mega Intech Data Collection\25_April_2023\Ramisha\Running and Standing'
 
 
+%% Changing directory to the folder where the data file exists
 
 % JULIA's DATA
+
 % Julia_20231206
 % cd 'C:\Users\shovo\OneDrive - University of Waterloo\Documents\NRE Lab\Mega InTech\Julia_Data\Julia_20231206\ImpactSense'
 
 % Julia_20231218
-cd 'C:\Users\shovo\OneDrive - University of Waterloo\Documents\NRE Lab\Mega InTech\Julia_Data\Julia_20231218\ImpactSense'
+% cd 'C:\Users\shovo\OneDrive - University of Waterloo\Documents\NRE Lab\Mega InTech\Julia_Data\Julia_20231218\ImpactSense'
 
 
 %% Importing full csv file as a matrix
@@ -106,24 +108,60 @@ cd 'C:\Users\shovo\OneDrive - University of Waterloo\Documents\NRE Lab\Mega InTe
 
 %% Processing JULIA's DATA: Reading csv file and extracting GyroY data
 
+% No Activity = 0
+% 
+% Walking = 1
+% Stairs Ascent = 2
+% Stairs Descent = 3
+% Running = 4
+% 
+% Other = 5
+
+% Features matrix update:
+% Column         Content
+%   1      1st Positive Peak Index
+%   2      2nd Positive Peak Index
+%   3      1st Negative Peak Index
+%   4      Max Magnitude of the Positive Peak
+%   5      Activity-based on Magnitude
+
+% To reverse the signal: The (-) sign needs to be removed put infront of
+% the -lowpass(); during **Data-Filtration**
+% filtData = -lowpass(DataGyroY,2/100); 
+
+
 % Date: Julia_20231206
 
 % Dataset_1: EMWM010117
 % DataFull = readmatrix('Julia_20231206_ImpactSense_EMWM010117Aidf_Left_EE4623FE1AA4_06122023092906.csv');
-% DataFull = readmatrix('Julia_20231206_ImpactSense_EMWM010117Aidf_Right_D8F779651FCC_06122023093317.csv');
+% DataFull = readmatrix('Julia_20231206_ImpactSense_EMWM010117Aidf_Right_D8F779651FCC_06122023093317.csv');  % Signal needs to be reversed.
 
 % Dataset_2: HMWM010117
-% DataFull = readmatrix('Julia_20231206_ImpactSense_HMWM010117Jidf_Left_EE4623FE1AA4_06122023091408.csv');
+% DataFull = readmatrix('Julia_20231206_ImpactSense_HMWM010117Jidf_Left_EE4623FE1AA4_06122023091408.csv');   
 % DataFull = readmatrix('Julia_20231206_ImpactSense_HMWM010117Jidf_Right_D8F779651FCC_06122023090957.csv');
 
-% Date: % Julia_20231206
-% Dataset_1: Bethany
-DataFull = readmatrix('Julia_20231218_ImpactSense_bethany_Left_EE4623FE1AA4_18122023101143.csv');
-DataFull = readmatrix('Julia_20231218_ImpactSense_bethany_Right_D8F779651FCC_18122023101409.csv');
 
-% Dataset_2
-DataFull = readmatrix('Julia_20231206_ImpactSense_EMWM010117Aidf_Left_EE4623FE1AA4_06122023092906.csv');
-DataFull = readmatrix('Julia_20231206_ImpactSense_EMWM010117Aidf_Left_EE4623FE1AA4_06122023092906.csv');
+% Date: % Julia_20231218
+
+% Dataset_1: Bethany
+% DataFull = readmatrix('Julia_20231218_ImpactSense_bethany_Left_EE4623FE1AA4_18122023101143.csv'); 
+% DataFull = readmatrix('Julia_20231218_ImpactSense_bethany_Right_D8F779651FCC_18122023101409.csv'); 
+
+% Dataset_2: CMwm070222
+% DataFull = readmatrix('Julia_20231218_ImpactSense_CMwm070222Pidf_Left_EE4623FE1AA4_18122023100400.csv');
+% DataFull = readmatrix('Julia_20231218_ImpactSense_CMwm070222Pidf_Right_D8F779651FCC_18122023095958.csv');
+
+% Dataset_3: MMwm070222
+% DataFull = readmatrix('Julia_20231218_ImpactSense_MMwm070222Nidf_Left_EE4623FE1AA4_18122023091636.csv');
+% DataFull = readmatrix('Julia_20231218_ImpactSense_MMwm070222Nidf_Right_D8F779651FCC_18122023092027.csv);
+
+% Dataset_4: RMwm070222
+% DataFull = readmatrix('Julia_20231218_ImpactSense_RMwm070222Didf_Left_EE4623FE1AA4_18122023093616.csv');
+% DataFull = readmatrix('Julia_20231218_ImpactSense_RMwm070222Didf_Right_D8F779651FCC_18122023093348.csv');
+
+% Dataset_5: VMwm070222
+% DataFull = readmatrix('Julia_20231218_ImpactSense_VMwm070222Aidm_Left_EE4623FE1AA4_18122023094739.csv');
+% DataFull = readmatrix('Julia_20231218_ImpactSense_VMwm070222Aidm_Right_D8F779651FCC_18122023095005.csv');
 
 
 DataGyroY = DataFull(:,13);
@@ -134,18 +172,23 @@ DataGyroY = DataFull(:,13);
 % better
 
 filtData = -lowpass(DataGyroY,2/100);
+
+figure;
+plot(-filtData);
+
 % filtData = lowpass(DataGyroY,5/100);
 
 % Old filter parameter
 % filtData = lowpass(DataGyroX,8/100);
 % [filtData,d]= lowpass(DataGyroX,8/100,100);
 
-% plot(-filtData);
+
 
 %% Stride Segmentation
 % Original tuning values used by Alysson 
 % [peak,ind] = findpeaks((-filtData),'MinPeakHeight',200,'MinPeakProminence',250,'MinPeakDistance',60);
-[peak,ind] = findpeaks((filtData),'MinPeakHeight',200,'MinPeakProminence',250,'MinPeakDistance',60);
+ 
+[peak,ind] = findpeaks((filtData),'MinPeakHeight',200,'MinPeakProminence',250,'MinPeakDistance',60); % The (-) sign needs to be removed put infront of the (-)filtData to reverse the signal
 
 k = 1;
 for peakIter = 2 : length(peak)
@@ -181,7 +224,9 @@ features = zeros(n,3);
 for peakStrideIter = 1:n 
 %     Original tuning values used by Alysson
     % [peakStrides,indStrides] = findpeaks(strides(:,peakStrideIter),'MinPeakProminence',100,'MinPeakHeight',50,'MinPeakDistance',20);
-    [peakStrides,indStrides] = findpeaks(strides(:,peakStrideIter),'MinPeakProminence',100,'MinPeakHeight',2000,'MinPeakDistance',20);
+    
+    positive_peak_height = 2000; % Threshold for considering a positive peak
+    [peakStrides,indStrides] = findpeaks(strides(:,peakStrideIter),'MinPeakProminence',100,'MinPeakHeight',positive_peak_height,'MinPeakDistance',20);
     
     % Storing values of peakStrides for checking stride is Running or
     % Stairs Ascent
@@ -201,7 +246,9 @@ for peakStrideIter = 1:n
     % 2600 for walking. Also good for Stairs Descent (might have to design
     % the algorithm to classify as Descent when two positive peaks are
     % found
-    [negPeakStrides,negIndStrides] = findpeaks(-strides(:,peakStrideIter),'MinPeakProminence',125,'MinPeakHeight',2600); 
+    
+    negative_peak_height = 2600; % Threshold for considering a negative peak
+    [negPeakStrides,negIndStrides] = findpeaks(-strides(:,peakStrideIter),'MinPeakProminence',125,'MinPeakHeight',negative_peak_height); 
 
     % Restricting the analysis from 20 to 80 percent of the strides
     % original is set at 125 for both 
@@ -349,6 +396,7 @@ for peakStrideIter = 1:n
 
 end
 
+figure;
 plot(features(:,5:end),'DisplayName','features(:,5:end)');
 title('Activity Classification based on 3-stride Threshold');
 xlabel('Stride Number');
