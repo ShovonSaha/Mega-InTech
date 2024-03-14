@@ -33,6 +33,12 @@ close all;
 % Julia_20231218
 % cd 'C:\Users\shovo\OneDrive - University of Waterloo\Documents\NRE Lab\Mega InTech\Julia_Data\Julia_20231218\ImpactSense'
 
+% Julia_20240108
+cd 'C:\Users\shovo\OneDrive - University of Waterloo\Documents\NRE Lab\Mega InTech\Julia_Data\Julia_20240108\ImpactSense'
+
+% Dave
+% cd 'C:\Users\shovo\OneDrive - University of Waterloo\Documents\NRE Lab\Mega InTech\Dave's Data\ImpactSense'
+
 
 %% Importing full csv file as a matrix
 
@@ -106,7 +112,7 @@ close all;
 % DataGyroZ = DataFull(:,14);
 
 
-%% Processing JULIA's DATA: Reading csv file and extracting GyroY data
+%% Processing JULIA and DAVE's DATA: Reading csv file and extracting GyroY data
 
 % No Activity = 0
 % 
@@ -130,7 +136,7 @@ close all;
 % filtData = -lowpass(DataGyroY,2/100); 
 
 
-% Date: Julia_20231206
+% Date: Julia_20231206 (06 December, 2023)
 
 % Dataset_1: EMWM010117
 % DataFull = readmatrix('Julia_20231206_ImpactSense_EMWM010117Aidf_Left_EE4623FE1AA4_06122023092906.csv');
@@ -141,7 +147,7 @@ close all;
 % DataFull = readmatrix('Julia_20231206_ImpactSense_HMWM010117Jidf_Right_D8F779651FCC_06122023090957.csv');
 
 
-% Date: % Julia_20231218
+% Date: % Julia_20231218 (18 December, 2023)
 
 % Dataset_1: Bethany
 % DataFull = readmatrix('Julia_20231218_ImpactSense_bethany_Left_EE4623FE1AA4_18122023101143.csv'); 
@@ -162,6 +168,47 @@ close all;
 % Dataset_5: VMwm070222
 % DataFull = readmatrix('Julia_20231218_ImpactSense_VMwm070222Aidm_Left_EE4623FE1AA4_18122023094739.csv');
 % DataFull = readmatrix('Julia_20231218_ImpactSense_VMwm070222Aidm_Right_D8F779651FCC_18122023095005.csv');
+
+
+
+% Date: Julia_20240108 (08 January, 2024)
+
+% Dataset_1: BMWM070222H
+% DataFull = readmatrix('BMWM070222H_Left_EE4623FE1AA4_08012024100659.csv'); 
+% DataFull = readmatrix('BHMWM070222H_Right_D8F779651FCC_08012024100916.csv'); 
+
+% Dataset_2: BMWM070222S
+% DataFull = readmatrix('BMWM070222S_Left_EE4623FE1AA4_08012024095043.csv');
+% DataFull = readmatrix('BMWM070222S_Right_D8F779651FCC_08012024094911.csv');
+
+% Dataset_3: GMWM070222D
+% DataFull = readmatrix('GMWM070222D_Left_EE4623FE1AA4_08012024092050.csv');
+% DataFull = readmatrix('GMWM070222D_Right_D8F779651FCC_08012024091854.csv);
+
+% Dataset_4: HMWM070222A
+% DataFull = readmatrix('HMWM0702222A_Left_EE4623FE1AA4_08012024090515.csv');
+% DataFull = readmatrix('HMWM070222A_Right_D8F779651FCC_08012024090751.csv');
+
+% Dataset_5: MMWM07022R
+% DataFull = readmatrix('MMWM07022R_Left_EE4623FE1AA4_08012024092939.csv');
+% DataFull = readmatrix('MMWM070222R_Right_D8F779651FCC_08012024092812.csv');
+
+% Dataset_6: MMWM070222E
+% DataFull = readmatrix('MMWM070222E_Left_EE4623FE1AA4_08012024093839.csv');
+% DataFull = readmatrix('MMWM070222E_Right_D8F779651FCC_08012024094005.csv');
+
+% Dataset_7: MMWM070222M
+% DataFull = readmatrix('MMWM070222M_Left_EE4623FE1AA4_08012024095925.csv');
+% DataFull = readmatrix('MMWM070222M_Right_D8F779651FCC_08012024100051.csv');
+
+
+
+% Date: Dave (06 March, 2024)
+
+% Dataset_1: Dave
+% DataFull = readmatrix('Dave_20240306185547_Dave_Left_EE4623FE1AA4_06032024015352.csv'); 
+% DataFull = readmatrix('Dave_20240306185547_Dave_Right_D8F779651FCC_06032024015118.csv'); 
+
 
 
 DataGyroY = DataFull(:,13);
