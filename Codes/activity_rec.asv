@@ -183,7 +183,7 @@ cd 'C:\Users\shovo\OneDrive - University of Waterloo\Documents\NRE Lab\Mega InTe
 
 % Dataset_3: GMWM070222D
 % DataFull = readmatrix('GMWM070222D_Left_EE4623FE1AA4_08012024092050.csv');
-% DataFull = readmatrix('GMWM070222D_Right_D8F779651FCC_08012024091854.csv');
+% DataFull = readmatrix('GMWM070222D_Right_D8F779651FCC_08012024091854.csv);
 
 % Dataset_4: HMWM070222A
 % DataFull = readmatrix('HMWM0702222A_Left_EE4623FE1AA4_08012024090515.csv');
@@ -218,10 +218,10 @@ DataGyroY = DataFull(:,13);
 % % filtData = lowpass(DataGyroX,0.502654824); % New filter. Old one works
 % better
 
-filtData = -lowpass(DataGyroY,2/100); % The (-) sign needs to be removed put infront of the (-)lowpass() to reverse the signal
+filtData = -lowpass(DataGyroY,2/100);
 
-% figure;
-% plot(-filtData);
+figure;
+plot(filtData);
 
 % filtData = lowpass(DataGyroY,5/100);
 
@@ -235,7 +235,7 @@ filtData = -lowpass(DataGyroY,2/100); % The (-) sign needs to be removed put inf
 % Original tuning values used by Alysson 
 % [peak,ind] = findpeaks((-filtData),'MinPeakHeight',200,'MinPeakProminence',250,'MinPeakDistance',60);
  
-[peak,ind] = findpeaks((filtData),'MinPeakHeight',200,'MinPeakProminence',250,'MinPeakDistance',60); 
+[peak,ind] = findpeaks((filtData),'MinPeakHeight',200,'MinPeakProminence',250,'MinPeakDistance',60); % The (-) sign needs to be removed put infront of the (-)filtData to reverse the signal
 
 k = 1;
 for peakIter = 2 : length(peak)
