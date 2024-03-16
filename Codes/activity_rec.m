@@ -376,7 +376,57 @@ for i = 1:length(DataFull_labeled) - window_size + 1
 end
 
 
-% Plot filtGyroY and the 15th column of DataFull_labeled
+% Plot filtGyroY and the 16th column of DataFull_labeled
+% figure;
+% plot(filtGyroY, 'b', 'LineWidth', 1.5);
+% hold on;
+% plot(DataFull_labeled(:, 16), 'r', 'LineWidth', 1.5);
+% hold off;
+% xlabel('No. of Packets');
+% ylabel('Data / Activity Label');
+% title('Filtered Gyro Y Data and Activity Label');
+% legend('Filtered Gyro Y', 'Activity Label');
+
+
+
+% Define parameters
+min_segment_length = 60; % Minimum length of a segment to be retained
+
+% Initialize activity and no activity segments
+activity_segments = [];
+no_activity_segments = [];
+
+% Extract segments of activity and no activity
+for i = 1:length(DataFull_labeled)
+    if DataFull_labeled(i, 16) == high_val
+        if isempty(activity_segments) || activity_segments(end, 2) < i-1
+            activity_segments = [activity_segments; i, i];
+        else
+            activity_segments(end, 2) = i;
+        end
+    else
+        if isempty(no_activity_segments) || no_activity_segments(end, 2) < i-1
+            no_activity_segments = [no_activity_segments; i, i];
+        else
+            no_activity_segments(end, 2) = i;
+        end
+    end
+end
+
+% Merge adjacent segments that are below the minimum length threshold
+activity_segments = merge_segments(activity_segments, min_segment_length);
+no_activity_segments = merge_segments(no_activity_segments, min_segment_length);
+
+% Update the 16th column of DataFull_labeled based on the merged segments
+DataFull_labeled(:, 16) = 0; % Reset the 16th column
+for i = 1:size(activity_segments, 1)
+    DataFull_labeled(activity_segments(i, 1):activity_segments(i, 2), 16) = high_val;
+end
+for i = 1:size(no_activity_segments, 1)
+    DataFull_labeled(no_activity_segments(i, 1):no_activity_segments(i, 2), 16) = 0;
+end
+
+% Plot filtGyroY and the 16th column of DataFull_labeled
 figure;
 plot(filtGyroY, 'b', 'LineWidth', 1.5);
 hold on;
@@ -386,6 +436,22 @@ xlabel('No. of Packets');
 ylabel('Data / Activity Label');
 title('Filtered Gyro Y Data and Activity Label');
 legend('Filtered Gyro Y', 'Activity Label');
+
+% Function to merge adjacent segments below the minimum length threshold
+function merged_segments = merge_segments(segments, min_length)
+    merged_segments = [];
+    if ~isempty(segments)
+        merged_segments = segments(1, :);
+        for i = 2:size(segments, 1)
+            if segments(i, 1) - merged_segments(end, 2) <= min_length
+                merged_segments(end, 2) = segments(i, 2);
+            else
+                merged_segments = [merged_segments; segments(i, :)];
+            end
+        end
+    end
+end
+
 
 %% Stride Segmentation
 % Original tuning values used by Alysson 

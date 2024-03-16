@@ -332,75 +332,101 @@ for i = 1:(length(filtGyroY) - window_size + 1)
     end
 end
 
-% % Append the labels to the DataFull matrix as the 15th column
-% DataFull_labeled = [DataFull, labels];
-% 
-% 
-% % 3 Window -threshold based activity/no-activity labelling
-% consecutive_windows = 20; % Number of consecutive windows required for labeling
-% 
-% % Initialize activity counters
-% activity_counter = 0;
-% no_activity_counter = 0;
-% 
-% % Initialize the 16th column of DataFull_labeled
-% DataFull_labeled(:, 16) = 0;
-% 
-% % Iterate through the 15th column of DataFull_labeled
-% for i = 1:length(DataFull_labeled) - window_size + 1
-%     % Extract the window of activity labels
-%     window_labels = DataFull_labeled(i:i+window_size-1, 15);
-% 
-%     % Count the number of activity and no activity labels in the window
-%     num_activity = sum(window_labels);
-%     num_no_activity = window_size - num_activity;
-% 
-%     % Check if the number of activity or no activity labels exceeds the threshold
-%     if num_activity >= activity_threshold * window_size
-%         activity_counter = activity_counter + 1;
-%         no_activity_counter = 0;
-%     elseif num_no_activity >= (1 - activity_threshold) * window_size
-%         activity_counter = 0;
-%         no_activity_counter = no_activity_counter + 1;
-%     else
-%         activity_counter = 0;
-%         no_activity_counter = 0;
-%     end
-% 
-%     % Label the 16th column based on consecutive activity or no activity windows
-%     if activity_counter >= consecutive_windows
-%         DataFull_labeled(i:i+window_size-1, 16) = high_val; % Label as activity
-%     elseif no_activity_counter >= consecutive_windows
-%         DataFull_labeled(i:i+window_size-1, 16) = 0; % Label as no activity
-%     end
-% end
+% Append the labels to the DataFull matrix as the 15th column
+DataFull_labeled = [DataFull, labels];
 
-% Define parameters
-window_size = 5; % Size of the moving window
-activity_threshold = 100; % Threshold for activity detection
 
-% Calculate rolling standard deviation of filtGyroY
-rolling_std = movstd(filtGyroY, window_size);
+% 3 Window -threshold based activity/no-activity labelling
+consecutive_windows = 3; % Number of consecutive windows required for labeling
 
-% Thresholding to detect activity
-activity_indices = rolling_std >= activity_threshold;
+% Initialize activity counters
+activity_counter = 0;
+no_activity_counter = 0;
 
-% Initialize the 15th and 16th columns of DataFull_labeled
-DataFull_labeled(:, 15) = activity_indices;
+% Initialize the 16th column of DataFull_labeled
 DataFull_labeled(:, 16) = 0;
 
-% Labeling based on consecutive activity or no activity
-consecutive_windows = 3;
-for i = 1:length(DataFull_labeled) - consecutive_windows + 1
-    if all(DataFull_labeled(i:i+consecutive_windows-1, 15) == 1)
-        DataFull_labeled(i:i+consecutive_windows-1, 16) = 1; % Label as activity
-    elseif all(DataFull_labeled(i:i+consecutive_windows-1, 15) == 0)
-        DataFull_labeled(i:i+consecutive_windows-1, 16) = 0; % Label as no activity
+% Iterate through the 15th column of DataFull_labeled
+for i = 1:length(DataFull_labeled) - window_size + 1
+    % Extract the window of activity labels
+    window_labels = DataFull_labeled(i:i+window_size-1, 15);
+
+    % Count the number of activity and no activity labels in the window
+    num_activity = sum(window_labels);
+    num_no_activity = window_size - num_activity;
+
+    % Check if the number of activity or no activity labels exceeds the threshold
+    if num_activity >= activity_threshold * window_size
+        activity_counter = activity_counter + 1;
+        no_activity_counter = 0;
+    elseif num_no_activity >= (1 - activity_threshold) * window_size
+        activity_counter = 0;
+        no_activity_counter = no_activity_counter + 1;
+    else
+        activity_counter = 0;
+        no_activity_counter = 0;
+    end
+
+    % Label the 16th column based on consecutive activity or no activity windows
+    if activity_counter >= consecutive_windows
+        DataFull_labeled(i:i+window_size-1, 16) = high_val; % Label as activity
+    elseif no_activity_counter >= consecutive_windows
+        DataFull_labeled(i:i+window_size-1, 16) = 0; % Label as no activity
     end
 end
 
 
-% Plot filtGyroY and the 15th column of DataFull_labeled
+% Plot filtGyroY and the 16th column of DataFull_labeled
+% figure;
+% plot(filtGyroY, 'b', 'LineWidth', 1.5);
+% hold on;
+% plot(DataFull_labeled(:, 16), 'r', 'LineWidth', 1.5);
+% hold off;
+% xlabel('No. of Packets');
+% ylabel('Data / Activity Label');
+% title('Filtered Gyro Y Data and Activity Label');
+% legend('Filtered Gyro Y', 'Activity Label');
+
+
+
+% Define parameters
+min_segment_length = 120; % Minimum length of a segment to be retained
+
+% Initialize activity and no activity segments
+activity_segments = [];
+no_activity_segments = [];
+
+% Extract segments of activity and no activity
+for i = 1:length(DataFull_labeled)
+    if DataFull_labeled(i, 16) == high_val
+        if isempty(activity_segments) || activity_segments(end, 2) < i-1
+            activity_segments = [activity_segments; i, i];
+        else
+            activity_segments(end, 2) = i;
+        end
+    else
+        if isempty(no_activity_segments) || no_activity_segments(end, 2) < i-1
+            no_activity_segments = [no_activity_segments; i, i];
+        else
+            no_activity_segments(end, 2) = i;
+        end
+    end
+end
+
+% Merge adjacent segments that are below the minimum length threshold
+activity_segments = merge_segments(activity_segments, min_segment_length);
+no_activity_segments = merge_segments(no_activity_segments, min_segment_length);
+
+% Update the 16th column of DataFull_labeled based on the merged segments
+DataFull_labeled(:, 16) = 0; % Reset the 16th column
+for i = 1:size(activity_segments, 1)
+    DataFull_labeled(activity_segments(i, 1):activity_segments(i, 2), 16) = high_val;
+end
+for i = 1:size(no_activity_segments, 1)
+    DataFull_labeled(no_activity_segments(i, 1):no_activity_segments(i, 2), 16) = 0;
+end
+
+% Plot filtGyroY and the 16th column of DataFull_labeled
 figure;
 plot(filtGyroY, 'b', 'LineWidth', 1.5);
 hold on;
@@ -410,6 +436,21 @@ xlabel('No. of Packets');
 ylabel('Data / Activity Label');
 title('Filtered Gyro Y Data and Activity Label');
 legend('Filtered Gyro Y', 'Activity Label');
+
+% Function to merge adjacent segments below the minimum length threshold
+function merged_segments = merge_segments(segments, min_length)
+    merged_segments = [];
+    if ~isempty(segments)
+        merged_segments = segments(1, :);
+        for i = 2:size(segments, 1)
+            if segments(i, 1) - merged_segments(end, 2) <= min_length
+                merged_segments(end, 2) = segments(i, 2);
+            else
+                merged_segments = [merged_segments; segments(i, :)];
+            end
+        end
+    end
+end
 
 
 %% Stride Segmentation
@@ -488,261 +529,261 @@ legend('Filtered Gyro Y', 'Activity Label');
 % end
 
 %% Feature Extraction
-peakStrideIter = 0;
-
-[m,n] = size(strides);
-
-peakStridesMegnitude = zeros(n, 1); % For storing the magnitude of the peaks
-
-features = zeros(n,3);
-
-for peakStrideIter = 1:n 
-%     Original tuning values used by Alysson
-    % [peakStrides,indStrides] = findpeaks(strides(:,peakStrideIter),'MinPeakProminence',100,'MinPeakHeight',50,'MinPeakDistance',20);
-
-    positive_peak_height = 2000; % Threshold for considering a positive peak
-    [peakStrides,indStrides] = findpeaks(strides(:,peakStrideIter),'MinPeakProminence',100,'MinPeakHeight',positive_peak_height,'MinPeakDistance',20);
-
-    % Storing values of peakStrides for checking stride is Running or
-    % Stairs Ascent
-    % Calculate the magnitude as the maximum value of peakStrides
-    % if ~isempty(peakStrides)
-    %     peakStridesMegnitude(peakStrideIter) = max(peakStrides);
-    % end
-
-    % downstairs 1st and second peak and stair ascent and walking
-    % [peakStrides,indStrides] = findpeaks(strides(:,peakStrideIter),'MinPeakProminence',10,'MinPeakHeight',20,'MinPeakDistance',20);
-
-%     Original tuning values used by Alysson  
-%     [negPeakStrides,negIndStrides] = findpeaks(-strides(:,peakStrideIter),'MinPeakProminence',125,'MinPeakHeight',20); 
-
-    % walking 2nd peak negative
-    % 2800 works good with Stairs Descent
-    % 2600 for walking. Also good for Stairs Descent (might have to design
-    % the algorithm to classify as Descent when two positive peaks are
-    % found
-
-    negative_peak_height = 2600; % Threshold for considering a negative peak
-    [negPeakStrides,negIndStrides] = findpeaks(-strides(:,peakStrideIter),'MinPeakProminence',125,'MinPeakHeight',negative_peak_height); 
-
-    % Restricting the analysis from 20 to 80 percent of the strides
-    % original is set at 125 for both 
-    negPeakStrides = negPeakStrides((negIndStrides>20) & (negIndStrides<80));
-    negIndStrides = negIndStrides((negIndStrides>20) & (negIndStrides<80));
-
-    if isempty(peakStrides) && isempty(negPeakStrides)
-        % disp("Both peakStrides and negPeakStrides are empty")
-        continue;
-    elseif isempty(peakStrides) || isempty(negPeakStrides)
-%     Checking for empty arrays
-        if isempty(peakStrides)
-            if ~isempty(negPeakStrides)
-                features(peakStrideIter,3) = negIndStrides(1);
-            end
-        else
-            if length(peakStrides)==1
-                features(peakStrideIter,1) = indStrides(1);
-                features(peakStrideIter,4) = max(peakStrides);
-
-            else length(peakStrides)>1
-                features(peakStrideIter,1) = indStrides(1);
-                features(peakStrideIter,2) = indStrides(2);
-                features(peakStrideIter,4) = max(peakStrides);
-            end
-        end
-    else
-        if length(peakStrides)==1
-                features(peakStrideIter,1) = indStrides(1);
-                features(peakStrideIter,3) = negIndStrides(1);
-                features(peakStrideIter,4) = max(peakStrides);
-            else length(peakStrides)>1
-                features(peakStrideIter,1) = indStrides(1);
-                features(peakStrideIter,2) = indStrides(2);
-                features(peakStrideIter,3) = negIndStrides(1);
-                features(peakStrideIter,4) = max(peakStrides);
-        end
-    end
-end
-
-% Features matrix:
-% Column         Content
-%   1      1st Positive Peak Index
-%   2      2nd Positive Peak Index
-%   3      1st Negative Peak Index
-%   4      Max Magnitude of the Positive Peak
-
-%% Labelling Data based on Features for training the model
-% No Activity = 0
+% peakStrideIter = 0;
 % 
-% Walking = 1
-% Stairs Ascent = 2
-% Stairs Descent = 3
-% Running = 4
+% [m,n] = size(strides);
 % 
-% Other = 5
-
-% Features matrix update:
-% Column         Content
-%   1      1st Positive Peak Index
-%   2      2nd Positive Peak Index
-%   3      1st Negative Peak Index
-%   4      Max Magnitude of the Positive Peak
-%   5      Activity-based on Magnitude
-
-runningMagThreshold = 15000;
-
-for peakStrideIter = 1:n
-    % Check for no activity
-    if (features(peakStrideIter,1) == 0)
-        features(peakStrideIter,5) = 0; % No Activity
-    elseif (((features(peakStrideIter,1) == 0) && (features(peakStrideIter,2) == 0) && (features(peakStrideIter,3) == 0))) % No peaks found
-        features(peakStrideIter,5) = 0; % No Activity
-    elseif (features(peakStrideIter,1) > 0 ) && (features(peakStrideIter,2) == 0) && (features(peakStrideIter,3) > 0)
-        if (features(peakStrideIter,4) > runningMagThreshold)
-            features(peakStrideIter,5) = 4; % Running
-        else
-            features(peakStrideIter,5) = 1; % Walking stride
-        end
-        % features(peakStrideIter,5) = 1; % Walking stride
-    elseif ((features(peakStrideIter,1) > 0) && (features(peakStrideIter,2)) > 0) == 1
-        features(peakStrideIter,5) = 3; % Stairs Descent stride
-    elseif ((features(peakStrideIter,1)> 0) && (features(peakStrideIter,2) == 0) && (features(peakStrideIter,3)== 0))
-        % Stairs Ascent or Running. 
-        % Need to check the value of the peaks to confirm which one is it
-        % Running: Peaks >11,000
-        if (peakStridesMegnitude(peakStrideIter) > runningMagThreshold)
-            features(peakStrideIter,5) = 4; % Running
-        else
-            features(peakStrideIter,5) = 2; % Stairs Ascent stride
-        end
-    else
-        features(peakStrideIter,5) = 5 % Other
-    end
-end
-
-%% Activity Classification and Re-Classification
-
-% No Activity = 0
-% Walking = 1
-% Stairs Ascent = 2
-% Stairs Descent = 3
-% Running = 4
-% Other = 5
-
-% Features matrix update:
-% Column         Content
-%   1      1st Positive Peak Index
-%   2      2nd Positive Peak Index
-%   3      1st Negative Peak Index
-%   4      Max Magnitude of the Positive Peak
-%   5      Activity-based on Magnitude
-%   6      Threshold-based Activity (Re-classification after 3 consecutive activities
-
-% A activity needs to be classified for at least THREE strides before it can be re-classified
-consecutiveCount = 0;
-classifiedActivity = features(1,5);  % Assuming activity values start from 0
-
-for peakStrideIter = 1:n
-    % features(peakStrideIter,6) = consecutiveCount;
-    activity = features(peakStrideIter,5);
-
-    if peakStrideIter ~= 1
-        prevActivity = features(peakStrideIter-1,5);
-
-        if (prevActivity == activity)
-        consecutiveCount = consecutiveCount + 1;
-
-            if (consecutiveCount >= 3)
-                classifiedActivity = prevActivity;
-                features(peakStrideIter,6) = prevActivity;  % Assign new activity after 3 consecutive occurrences
-                features(peakStrideIter-1,6) = prevActivity;
-                features(peakStrideIter-2,6) = prevActivity;
-                features(peakStrideIter-3,6) = prevActivity;
-            else
-                features(peakStrideIter,6) = classifiedActivity;
-            end
-
-        else
-            consecutiveCount = 0; % Resetting counting
-            features(peakStrideIter,6) = classifiedActivity;
-        end
-
-    end   
-
-end
-
-figure;
-plot(features(:,5:end),'DisplayName','features(:,5:end)');
-title('Activity Classification based on 3-stride Threshold');
-xlabel('Stride Number');
-ylabel('Activity Number');
-legend('Activity', 'Threshold-Based Activity');
-% text('Activity Numbers: ', 'FontSize', 12, 'Color', 'r');
-
-%% Subplotting all the activities after the 
-% Threshold-based Segmentation of activitiies
-
-% figure;
+% peakStridesMegnitude = zeros(n, 1); % For storing the magnitude of the peaks
 % 
-% plot(strides(:,147:163));
-
+% features = zeros(n,3);
 % 
-% % Walking = 1
-% subplot(2, 2, 1);
-% plot(strides(:,46:112);
-% title('Walking = 1');
-% xlabel('Normalized Time');
-% ylabel('Magnitude');
+% for peakStrideIter = 1:n 
+% %     Original tuning values used by Alysson
+%     % [peakStrides,indStrides] = findpeaks(strides(:,peakStrideIter),'MinPeakProminence',100,'MinPeakHeight',50,'MinPeakDistance',20);
 % 
-% % Stairs Ascent = 2
-% subplot(2, 2, 2);
-% plot(strides(:,46:112));
-% title('Stairs Ascent = 2');
-% xlabel('Normalized Time');
-% ylabel('Magnitude');
+%     positive_peak_height = 2000; % Threshold for considering a positive peak
+%     [peakStrides,indStrides] = findpeaks(strides(:,peakStrideIter),'MinPeakProminence',100,'MinPeakHeight',positive_peak_height,'MinPeakDistance',20);
 % 
-% % Stairs Descent = 3
-% subplot(2, 2, 3);
-% plot(strides(:,46:112));
-% title('Stairs Descent = 3');
-% xlabel('Normalized Time');
-% ylabel('Magnitude');
+%     % Storing values of peakStrides for checking stride is Running or
+%     % Stairs Ascent
+%     % Calculate the magnitude as the maximum value of peakStrides
+%     % if ~isempty(peakStrides)
+%     %     peakStridesMegnitude(peakStrideIter) = max(peakStrides);
+%     % end
 % 
-% % Running = 4
-% subplot(2, 2, 4);
-% plot(strides(:,46:112));
-% title('Running = 4');
-% xlabel('Normalized Time');
-% ylabel('Magnitude');
-
-%% 
-% [label,NegLoss,PBScore,Posterior]=predict(Mdl,features);
+%     % downstairs 1st and second peak and stair ascent and walking
+%     % [peakStrides,indStrides] = findpeaks(strides(:,peakStrideIter),'MinPeakProminence',10,'MinPeakHeight',20,'MinPeakDistance',20);
 % 
-% visualLabel = zeros(length(label),1);
+% %     Original tuning values used by Alysson  
+% %     [negPeakStrides,negIndStrides] = findpeaks(-strides(:,peakStrideIter),'MinPeakProminence',125,'MinPeakHeight',20); 
 % 
-% for j = 1:length(label)
-%     if strcmp(label(j,1),'a')
-% %         stairs ascent
-%         visualLabel(j,1) = 1;
-%     elseif strcmp(label(j,1),'d')
-% %         stairs descent
-%         visualLabel(j,1) = 2;
-%     elseif strcmp(label(j,1),'w')
-% %         walking
-%         visualLabel(j,1) = 3;
-%     elseif strcmp(label(j,1),'s')
-% %         standing
-%         visualLabel(j,1) = 4;
-%     elseif strcmp(label(j,1),'o')
-% %         running/skipping
-%         visualLabel(j,1) = 5;
-%     elseif strcmp(label(j,1),'f')
-% %         random act
-%         visualLabel(j,1) = 6;
+%     % walking 2nd peak negative
+%     % 2800 works good with Stairs Descent
+%     % 2600 for walking. Also good for Stairs Descent (might have to design
+%     % the algorithm to classify as Descent when two positive peaks are
+%     % found
+% 
+%     negative_peak_height = 2600; % Threshold for considering a negative peak
+%     [negPeakStrides,negIndStrides] = findpeaks(-strides(:,peakStrideIter),'MinPeakProminence',125,'MinPeakHeight',negative_peak_height); 
+% 
+%     % Restricting the analysis from 20 to 80 percent of the strides
+%     % original is set at 125 for both 
+%     negPeakStrides = negPeakStrides((negIndStrides>20) & (negIndStrides<80));
+%     negIndStrides = negIndStrides((negIndStrides>20) & (negIndStrides<80));
+% 
+%     if isempty(peakStrides) && isempty(negPeakStrides)
+%         % disp("Both peakStrides and negPeakStrides are empty")
+%         continue;
+%     elseif isempty(peakStrides) || isempty(negPeakStrides)
+% %     Checking for empty arrays
+%         if isempty(peakStrides)
+%             if ~isempty(negPeakStrides)
+%                 features(peakStrideIter,3) = negIndStrides(1);
+%             end
+%         else
+%             if length(peakStrides)==1
+%                 features(peakStrideIter,1) = indStrides(1);
+%                 features(peakStrideIter,4) = max(peakStrides);
+% 
+%             else length(peakStrides)>1
+%                 features(peakStrideIter,1) = indStrides(1);
+%                 features(peakStrideIter,2) = indStrides(2);
+%                 features(peakStrideIter,4) = max(peakStrides);
+%             end
+%         end
 %     else
-% %         cannot detect
-% %         visualLabel(j) = 0;
+%         if length(peakStrides)==1
+%                 features(peakStrideIter,1) = indStrides(1);
+%                 features(peakStrideIter,3) = negIndStrides(1);
+%                 features(peakStrideIter,4) = max(peakStrides);
+%             else length(peakStrides)>1
+%                 features(peakStrideIter,1) = indStrides(1);
+%                 features(peakStrideIter,2) = indStrides(2);
+%                 features(peakStrideIter,3) = negIndStrides(1);
+%                 features(peakStrideIter,4) = max(peakStrides);
+%         end
 %     end
 % end
 % 
-% plot(visualLabel);
+% % Features matrix:
+% % Column         Content
+% %   1      1st Positive Peak Index
+% %   2      2nd Positive Peak Index
+% %   3      1st Negative Peak Index
+% %   4      Max Magnitude of the Positive Peak
+% 
+% %% Labelling Data based on Features for training the model
+% % No Activity = 0
+% % 
+% % Walking = 1
+% % Stairs Ascent = 2
+% % Stairs Descent = 3
+% % Running = 4
+% % 
+% % Other = 5
+% 
+% % Features matrix update:
+% % Column         Content
+% %   1      1st Positive Peak Index
+% %   2      2nd Positive Peak Index
+% %   3      1st Negative Peak Index
+% %   4      Max Magnitude of the Positive Peak
+% %   5      Activity-based on Magnitude
+% 
+% runningMagThreshold = 15000;
+% 
+% for peakStrideIter = 1:n
+%     % Check for no activity
+%     if (features(peakStrideIter,1) == 0)
+%         features(peakStrideIter,5) = 0; % No Activity
+%     elseif (((features(peakStrideIter,1) == 0) && (features(peakStrideIter,2) == 0) && (features(peakStrideIter,3) == 0))) % No peaks found
+%         features(peakStrideIter,5) = 0; % No Activity
+%     elseif (features(peakStrideIter,1) > 0 ) && (features(peakStrideIter,2) == 0) && (features(peakStrideIter,3) > 0)
+%         if (features(peakStrideIter,4) > runningMagThreshold)
+%             features(peakStrideIter,5) = 4; % Running
+%         else
+%             features(peakStrideIter,5) = 1; % Walking stride
+%         end
+%         % features(peakStrideIter,5) = 1; % Walking stride
+%     elseif ((features(peakStrideIter,1) > 0) && (features(peakStrideIter,2)) > 0) == 1
+%         features(peakStrideIter,5) = 3; % Stairs Descent stride
+%     elseif ((features(peakStrideIter,1)> 0) && (features(peakStrideIter,2) == 0) && (features(peakStrideIter,3)== 0))
+%         % Stairs Ascent or Running. 
+%         % Need to check the value of the peaks to confirm which one is it
+%         % Running: Peaks >11,000
+%         if (peakStridesMegnitude(peakStrideIter) > runningMagThreshold)
+%             features(peakStrideIter,5) = 4; % Running
+%         else
+%             features(peakStrideIter,5) = 2; % Stairs Ascent stride
+%         end
+%     else
+%         features(peakStrideIter,5) = 5 % Other
+%     end
+% end
+% 
+% %% Activity Classification and Re-Classification
+% 
+% % No Activity = 0
+% % Walking = 1
+% % Stairs Ascent = 2
+% % Stairs Descent = 3
+% % Running = 4
+% % Other = 5
+% 
+% % Features matrix update:
+% % Column         Content
+% %   1      1st Positive Peak Index
+% %   2      2nd Positive Peak Index
+% %   3      1st Negative Peak Index
+% %   4      Max Magnitude of the Positive Peak
+% %   5      Activity-based on Magnitude
+% %   6      Threshold-based Activity (Re-classification after 3 consecutive activities
+% 
+% % A activity needs to be classified for at least THREE strides before it can be re-classified
+% consecutiveCount = 0;
+% classifiedActivity = features(1,5);  % Assuming activity values start from 0
+% 
+% for peakStrideIter = 1:n
+%     % features(peakStrideIter,6) = consecutiveCount;
+%     activity = features(peakStrideIter,5);
+% 
+%     if peakStrideIter ~= 1
+%         prevActivity = features(peakStrideIter-1,5);
+% 
+%         if (prevActivity == activity)
+%         consecutiveCount = consecutiveCount + 1;
+% 
+%             if (consecutiveCount >= 3)
+%                 classifiedActivity = prevActivity;
+%                 features(peakStrideIter,6) = prevActivity;  % Assign new activity after 3 consecutive occurrences
+%                 features(peakStrideIter-1,6) = prevActivity;
+%                 features(peakStrideIter-2,6) = prevActivity;
+%                 features(peakStrideIter-3,6) = prevActivity;
+%             else
+%                 features(peakStrideIter,6) = classifiedActivity;
+%             end
+% 
+%         else
+%             consecutiveCount = 0; % Resetting counting
+%             features(peakStrideIter,6) = classifiedActivity;
+%         end
+% 
+%     end   
+% 
+% end
+% 
+% figure;
+% plot(features(:,5:end),'DisplayName','features(:,5:end)');
+% title('Activity Classification based on 3-stride Threshold');
+% xlabel('Stride Number');
+% ylabel('Activity Number');
+% legend('Activity', 'Threshold-Based Activity');
+% % text('Activity Numbers: ', 'FontSize', 12, 'Color', 'r');
+% 
+% %% Subplotting all the activities after the 
+% % Threshold-based Segmentation of activitiies
+% 
+% % figure;
+% % 
+% % plot(strides(:,147:163));
+% 
+% % 
+% % % Walking = 1
+% % subplot(2, 2, 1);
+% % plot(strides(:,46:112);
+% % title('Walking = 1');
+% % xlabel('Normalized Time');
+% % ylabel('Magnitude');
+% % 
+% % % Stairs Ascent = 2
+% % subplot(2, 2, 2);
+% % plot(strides(:,46:112));
+% % title('Stairs Ascent = 2');
+% % xlabel('Normalized Time');
+% % ylabel('Magnitude');
+% % 
+% % % Stairs Descent = 3
+% % subplot(2, 2, 3);
+% % plot(strides(:,46:112));
+% % title('Stairs Descent = 3');
+% % xlabel('Normalized Time');
+% % ylabel('Magnitude');
+% % 
+% % % Running = 4
+% % subplot(2, 2, 4);
+% % plot(strides(:,46:112));
+% % title('Running = 4');
+% % xlabel('Normalized Time');
+% % ylabel('Magnitude');
+% 
+% %% 
+% % [label,NegLoss,PBScore,Posterior]=predict(Mdl,features);
+% % 
+% % visualLabel = zeros(length(label),1);
+% % 
+% % for j = 1:length(label)
+% %     if strcmp(label(j,1),'a')
+% % %         stairs ascent
+% %         visualLabel(j,1) = 1;
+% %     elseif strcmp(label(j,1),'d')
+% % %         stairs descent
+% %         visualLabel(j,1) = 2;
+% %     elseif strcmp(label(j,1),'w')
+% % %         walking
+% %         visualLabel(j,1) = 3;
+% %     elseif strcmp(label(j,1),'s')
+% % %         standing
+% %         visualLabel(j,1) = 4;
+% %     elseif strcmp(label(j,1),'o')
+% % %         running/skipping
+% %         visualLabel(j,1) = 5;
+% %     elseif strcmp(label(j,1),'f')
+% % %         random act
+% %         visualLabel(j,1) = 6;
+% %     else
+% % %         cannot detect
+% % %         visualLabel(j) = 0;
+% %     end
+% % end
+% % 
+% % plot(visualLabel);
