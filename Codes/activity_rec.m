@@ -299,13 +299,6 @@ filtGyroY = -lowpass(DataGyroY,2/100); % The (-) sign needs to be removed put in
 
 %% Activity or No-activity detection
 
-% Compute the standard deviation of filtGyroY up to the 1908th data point
-% std_dev = std(filtGyroY(1:1908));
-
-% Display the result
-% disp(['Standard deviation of filtGyroY up to the 1908th data point: ', num2str(std_dev)]);
-
-
 % Define parameters
 window_size = 15;
 activity_threshold = 100; % Adjust as needed
@@ -375,20 +368,6 @@ for i = 1:length(DataFull_labeled) - window_size + 1
     end
 end
 
-
-% Plot filtGyroY and the 16th column of DataFull_labeled
-% figure;
-% plot(filtGyroY, 'b', 'LineWidth', 1.5);
-% hold on;
-% plot(DataFull_labeled(:, 16), 'r', 'LineWidth', 1.5);
-% hold off;
-% xlabel('No. of Packets');
-% ylabel('Data / Activity Label');
-% title('Filtered Gyro Y Data and Activity Label');
-% legend('Filtered Gyro Y', 'Activity Label');
-
-
-
 % Define parameters
 min_segment_length = 60; % Minimum length of a segment to be retained
 
@@ -437,20 +416,7 @@ ylabel('Data / Activity Label');
 title('Filtered Gyro Y Data and Activity Label');
 legend('Filtered Gyro Y', 'Activity Label');
 
-% Function to merge adjacent segments below the minimum length threshold
-function merged_segments = merge_segments(segments, min_length)
-    merged_segments = [];
-    if ~isempty(segments)
-        merged_segments = segments(1, :);
-        for i = 2:size(segments, 1)
-            if segments(i, 1) - merged_segments(end, 2) <= min_length
-                merged_segments(end, 2) = segments(i, 2);
-            else
-                merged_segments = [merged_segments; segments(i, :)];
-            end
-        end
-    end
-end
+% merged_segments() initialized at the very end of the file: Function to merge adjacent segments below the minimum length threshold
 
 
 %% Stride Segmentation
@@ -481,52 +447,47 @@ end
 % 
 % % plot(strides);
 
+% Define the minimum peak distance
+min_peak_distance = 60; % Adjust as needed
 
-% % Initialize strides variable
-% strides = [];
-% 
-% % Find indices where activity is detected
-% activity_indices = find(DataFull_labeled(:, 16) == high_val);
-% 
-% % Loop over activity intervals
-% for i = 1:length(activity_indices)-1
-%     % Extract data within each activity interval
-%     activity_start = activity_indices(i);
-%     activity_end = activity_indices(i+1);
-%     filtGyroY_activity = filtGyroY(activity_start:activity_end);
-% 
-%     % Check if the activity interval has enough data points for peak detection
-%     if length(filtGyroY_activity) >= 3
-%         % Compute the default minimum peak distance based on the length of the data
-%         default_min_peak_distance = max(1, floor(length(filtGyroY_activity)/10));
-% 
-%         % Ensure that the minimum peak distance is less than 32
-%         min_peak_distance = min(default_min_peak_distance, 31);
-% 
-%         % Perform stride segmentation within the activity interval
-%         [peak, ind] = findpeaks(filtGyroY_activity, 'MinPeakHeight', 200, 'MinPeakProminence', 250, 'MinPeakDistance', min_peak_distance);
-% 
-%         % Process peaks within the activity interval
-%         k = 1;
-%         for peakIter = 2:length(peak)
-%             if ind(peakIter) - ind(peakIter-1) > 300
-%                 continue
-%             else
-%                 oneStride = -filtGyroY_activity(ind(peakIter-1):ind(peakIter));
-% 
-%                 % Resample the data if needed
-%                 originalFs = length(oneStride);
-%                 desiredFs = 100;
-%                 [p, q] = rat(desiredFs/originalFs);
-%                 oneStride = resample(oneStride, p, q)';
-% 
-%                 % Store oneStride into strides
-%                 strides(:, k) = oneStride;
-%                 k = k + 1;
-%             end
-%         end
-%     end
-% end
+% Initialize strides
+strides = [];
+
+% Run stride segmentation algorithm only for segments longer than min_peak_distance
+for i = 1:length(activity_segments)
+    % Extract segment of filtGyroY data
+    filtGyroY_activity_segment = filtGyroY(activity_segments(i, 1):activity_segments(i, 2));
+
+    % Check if the segment is longer than the preset MinPeakDistance
+    if length(filtGyroY_activity_segment) >= min_peak_distance
+        % Run stride segmentation algorithm
+        [peak, ind] = findpeaks(filtGyroY_activity_segment, 'MinPeakHeight', 200, 'MinPeakProminence', 250, 'MinPeakDistance', min_peak_distance);
+
+        % Process peaks within the segment
+        k = 1;
+        for peakIter = 2:length(peak)
+            if ind(peakIter) - ind(peakIter-1) > 300
+                continue
+            else
+                oneStride = -filtGyroY_activity_segment(ind(peakIter-1):ind(peakIter));
+
+                % Normalizing the data and the stride times
+                originalFs = length(oneStride);
+                desiredFs = 100;
+                [p, q] = rat(desiredFs/originalFs);
+                oneStride = resample(oneStride, p, q)';
+
+                % Storing oneStride into strides
+                strides(:, k) = oneStride;
+                k = k + 1;
+            end
+        end
+    end
+end
+
+% Plot the strides if needed
+% plot(strides);
+
 
 %% Feature Extraction
 % peakStrideIter = 0;
@@ -787,3 +748,24 @@ end
 % % end
 % % 
 % % plot(visualLabel);
+
+
+
+
+
+%% Functions initialized
+
+% Function to merge adjacent segments below the minimum length threshold
+function merged_segments = merge_segments(segments, min_length)
+    merged_segments = [];
+    if ~isempty(segments)
+        merged_segments = segments(1, :);
+        for i = 2:size(segments, 1)
+            if segments(i, 1) - merged_segments(end, 2) <= min_length
+                merged_segments(end, 2) = segments(i, 2);
+            else
+                merged_segments = [merged_segments; segments(i, :)];
+            end
+        end
+    end
+end
