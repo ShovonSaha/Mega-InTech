@@ -372,7 +372,7 @@ end
 min_segment_length = 60; % Minimum length of a segment to be retained
 
 % Initialize activity and no activity segments
-activity_segments = [];
+activity_segments = []; % 
 no_activity_segments = [];
 
 % Extract segments of activity and no activity
@@ -457,14 +457,14 @@ strides = [];
 for i = 1:length(activity_segments)
     % Extract segment of filtGyroY data
     filtGyroY_activity_segment = filtGyroY(activity_segments(i, 1):activity_segments(i, 2));
-
+    
     % Check if the segment is longer than the preset MinPeakDistance
     if length(filtGyroY_activity_segment) >= min_peak_distance
         % Run stride segmentation algorithm
         [peak, ind] = findpeaks(filtGyroY_activity_segment, 'MinPeakHeight', 200, 'MinPeakProminence', 250, 'MinPeakDistance', min_peak_distance);
 
         % Process peaks within the segment
-        k = 1;
+        % k = 1;
         for peakIter = 2:length(peak)
             if ind(peakIter) - ind(peakIter-1) > 300
                 continue
@@ -478,8 +478,11 @@ for i = 1:length(activity_segments)
                 oneStride = resample(oneStride, p, q)';
 
                 % Storing oneStride into strides
-                strides(:, k) = oneStride;
-                k = k + 1;
+                % strides(:, k) = oneStride;
+                % k = k + 1;
+
+                % Append oneStride to strides matrix
+                strides(:, end+1) = oneStride;
             end
         end
     end
