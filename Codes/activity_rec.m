@@ -419,33 +419,8 @@ legend('Filtered Gyro Y', 'Activity Label');
 % merged_segments() initialized at the very end of the file: Function to merge adjacent segments below the minimum length threshold
 
 
-%% Stride Segmentation
-% Original tuning values used by Alysson 
-% [peak,ind] = findpeaks((-filtGyroY),'MinPeakHeight',200,'MinPeakProminence',250,'MinPeakDistance',60);
-% 
-% [peak,ind] = findpeaks((filtGyroY),'MinPeakHeight',200,'MinPeakProminence',250,'MinPeakDistance',60); 
-% 
-% k = 1;
-% for peakIter = 2 : length(peak)
-%     if ind(peakIter)-ind(peakIter-1) > 300
-%         continue
-%     else
-%         oneStride = -filtGyroY(ind(peakIter-1):ind(peakIter));
-% 
-% %         Normalizing the data and the stride times
-%         originalFs=length(oneStride);
-%         desiredFs = 100;
-%         [p,q] = rat(desiredFs/originalFs);
-%         oneStride = resample(oneStride,p,q)';
-%         % plot(oneStride);
-% 
-% % Storing oneStride into strides
-%         strides(:,k) = oneStride;
-%         k = k + 1;
-%     end
-% end
-% 
-% % plot(strides);
+
+%% Stride Segmentation with Activity Segments
 
 % Define the minimum peak distance
 min_peak_distance = 60; % Adjust as needed
@@ -490,6 +465,35 @@ end
 
 % Plot the strides if needed
 % plot(strides);
+
+%% Stride Segmentation
+
+% Original tuning values used by Alysson 
+% [peak,ind] = findpeaks((-filtGyroY),'MinPeakHeight',200,'MinPeakProminence',250,'MinPeakDistance',60);
+% 
+% [peak,ind] = findpeaks((filtGyroY),'MinPeakHeight',200,'MinPeakProminence',250,'MinPeakDistance',60); 
+% 
+% k = 1;
+% for peakIter = 2 : length(peak)
+%     if ind(peakIter)-ind(peakIter-1) > 300
+%         continue
+%     else
+%         oneStride = -filtGyroY(ind(peakIter-1):ind(peakIter));
+% 
+% %         Normalizing the data and the stride times
+%         originalFs=length(oneStride);
+%         desiredFs = 100;
+%         [p,q] = rat(desiredFs/originalFs);
+%         oneStride = resample(oneStride,p,q)';
+%         % plot(oneStride);
+% 
+% % Storing oneStride into strides
+%         strides(:,k) = oneStride;
+%         k = k + 1;
+%     end
+% end
+% 
+% % plot(strides);
 
 
 %% Feature Extraction
@@ -683,74 +687,78 @@ end
 % ylabel('Activity Number');
 % legend('Activity', 'Threshold-Based Activity');
 % % text('Activity Numbers: ', 'FontSize', 12, 'Color', 'r');
+
+%% Subplotting all the activities after the 
+% Threshold-based Segmentation of activitiies
+
+% figure;
 % 
-% %% Subplotting all the activities after the 
-% % Threshold-based Segmentation of activitiies
+% plot(strides(:,147:163));
+
 % 
-% % figure;
-% % 
-% % plot(strides(:,147:163));
+% % Walking = 1
+% subplot(2, 2, 1);
+% plot(strides(:,46:112);
+% title('Walking = 1');
+% xlabel('Normalized Time');
+% ylabel('Magnitude');
 % 
-% % 
-% % % Walking = 1
-% % subplot(2, 2, 1);
-% % plot(strides(:,46:112);
-% % title('Walking = 1');
-% % xlabel('Normalized Time');
-% % ylabel('Magnitude');
-% % 
-% % % Stairs Ascent = 2
-% % subplot(2, 2, 2);
-% % plot(strides(:,46:112));
-% % title('Stairs Ascent = 2');
-% % xlabel('Normalized Time');
-% % ylabel('Magnitude');
-% % 
-% % % Stairs Descent = 3
-% % subplot(2, 2, 3);
-% % plot(strides(:,46:112));
-% % title('Stairs Descent = 3');
-% % xlabel('Normalized Time');
-% % ylabel('Magnitude');
-% % 
-% % % Running = 4
-% % subplot(2, 2, 4);
-% % plot(strides(:,46:112));
-% % title('Running = 4');
-% % xlabel('Normalized Time');
-% % ylabel('Magnitude');
+% % Stairs Ascent = 2
+% subplot(2, 2, 2);
+% plot(strides(:,46:112));
+% title('Stairs Ascent = 2');
+% xlabel('Normalized Time');
+% ylabel('Magnitude');
 % 
-% %% 
-% % [label,NegLoss,PBScore,Posterior]=predict(Mdl,features);
-% % 
-% % visualLabel = zeros(length(label),1);
-% % 
-% % for j = 1:length(label)
-% %     if strcmp(label(j,1),'a')
-% % %         stairs ascent
-% %         visualLabel(j,1) = 1;
-% %     elseif strcmp(label(j,1),'d')
-% % %         stairs descent
-% %         visualLabel(j,1) = 2;
-% %     elseif strcmp(label(j,1),'w')
-% % %         walking
-% %         visualLabel(j,1) = 3;
-% %     elseif strcmp(label(j,1),'s')
-% % %         standing
-% %         visualLabel(j,1) = 4;
-% %     elseif strcmp(label(j,1),'o')
-% % %         running/skipping
-% %         visualLabel(j,1) = 5;
-% %     elseif strcmp(label(j,1),'f')
-% % %         random act
-% %         visualLabel(j,1) = 6;
-% %     else
-% % %         cannot detect
-% % %         visualLabel(j) = 0;
-% %     end
-% % end
-% % 
-% % plot(visualLabel);
+% % Stairs Descent = 3
+% subplot(2, 2, 3);
+% plot(strides(:,46:112));
+% title('Stairs Descent = 3');
+% xlabel('Normalized Time');
+% ylabel('Magnitude');
+% 
+% % Running = 4
+% subplot(2, 2, 4);
+% plot(strides(:,46:112));
+% title('Running = 4');
+% xlabel('Normalized Time');
+% ylabel('Magnitude');
+
+%% 
+% [label,NegLoss,PBScore,Posterior]=predict(Mdl,features);
+% 
+% visualLabel = zeros(length(label),1);
+% 
+% for j = 1:length(label)
+%     if strcmp(label(j,1),'a')
+% %         stairs ascent
+%         visualLabel(j,1) = 1;
+%     elseif strcmp(label(j,1),'d')
+% %         stairs descent
+%         visualLabel(j,1) = 2;
+%     elseif strcmp(label(j,1),'w')
+% %         walking
+%         visualLabel(j,1) = 3;
+%     elseif strcmp(label(j,1),'s')
+% %         standing
+%         visualLabel(j,1) = 4;
+%     elseif strcmp(label(j,1),'o')
+% %         running/skipping
+%         visualLabel(j,1) = 5;
+%     elseif strcmp(label(j,1),'f')
+% %         random act
+%         visualLabel(j,1) = 6;
+%     else
+% %         cannot detect
+% %         visualLabel(j) = 0;
+%     end
+% end
+% 
+% plot(visualLabel);
+
+%% Further visualization
+
+
 
 
 
