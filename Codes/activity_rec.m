@@ -1,8 +1,8 @@
 %% Clearing existing variables
 % clearvars
 % clearvars -except Mdl
-clear all;
-close all;
+% clear all;
+% close all;
 
 %% Changing directory to the folder where the data file exists
 
@@ -218,8 +218,8 @@ close all;
 clear all;
 close all;
 
-% Dave's Data (06 March, 2024)
-cd 'C:\Users\Nazia\OneDrive\Documents\Shovon\Mega-InTech\Julia_Data\Julia_20231206\ImpactSense'
+% Date: Julia_20231206 (06 December, 2023)
+cd 'C:\Users\shovo\OneDrive - University of Waterloo\Documents\NRE Lab\Mega InTech\Julia_Data\Julia_20231206\ImpactSense'
 
 % Dataset_2: HMWM010117
 DataFull = readmatrix('Julia_20231206_ImpactSense_HMWM010117Jidf_Left_EE4623FE1AA4_06122023091408.csv');   
@@ -285,11 +285,17 @@ DataFull = readmatrix('Julia_20231206_ImpactSense_HMWM010117Jidf_Left_EE4623FE1A
 
 % If the columns were not removed
 DataGyroY = DataFull(:,13);
+DataGyroZ = DataFull(:, 14);
 
 filtGyroY = -lowpass(DataGyroY,2/100); % The (-) sign needs to be removed put infront of the (-)lowpass() to reverse the signal
+filtGyroZ = -lowpass(DataGyroZ,2/100);
 
-% figure;
-% plot(-filtGyroY);
+
+figure;
+plot(-filtGyroY);
+hold on;
+plot(-filtGyroZ);
+hold off;
 
 % filtGyroY = lowpass(DataGyroY,5/100);
 
@@ -426,45 +432,56 @@ legend('Filtered Gyro Y', 'Activity Label');
 min_peak_distance = 60; % Adjust as needed
 
 % Initialize strides
-strides = [];
+strides_y = [];
+strides_z = [];
 
 % Run stride segmentation algorithm only for segments longer than min_peak_distance
 for i = 1:length(activity_segments)
-    % Extract segment of filtGyroY data
+    % Extract segment of filtGyroY and filtGyroZ data for Activity Segments
     filtGyroY_activity_segment = filtGyroY(activity_segments(i, 1):activity_segments(i, 2));
-    
+    filtGyroZ_activity_segment = filtGyroZ(activity_segments(i, 1):activity_segments(i, 2));
+
     % Check if the segment is longer than the preset MinPeakDistance
     if length(filtGyroY_activity_segment) >= min_peak_distance
         % Run stride segmentation algorithm
-        [peak, ind] = findpeaks(filtGyroY_activity_segment, 'MinPeakHeight', 200, 'MinPeakProminence', 250, 'MinPeakDistance', min_peak_distance);
+        [peak_y, ind_y] = findpeaks(filtGyroY_activity_segment, 'MinPeakHeight', 200, 'MinPeakProminence', 250, 'MinPeakDistance', min_peak_distance);
+        % [peak_z, ind_z] = findpeaks(filtGyroZ_activity_segment, 'MinPeakHeight', 200, 'MinPeakProminence', 250, 'MinPeakDistance', min_peak_distance);
 
         % Process peaks within the segment
         % k = 1;
-        for peakIter = 2:length(peak)
+
+        for peakIter = 2:length(peak_y)
             if ind(peakIter) - ind(peakIter-1) > 300
                 continue
             else
-                oneStride = -filtGyroY_activity_segment(ind(peakIter-1):ind(peakIter));
+                oneStride_y = -filtGyroY_activity_segment(ind_y(peakIter-1):ind_y(peakIter));
+                oneStride_z = -filtGyroZ_activity_segment(ind_y(peakIter-1):ind_y(peakIter));
 
                 % Normalizing the data and the stride times
-                originalFs = length(oneStride);
+                originalFs = length(oneStride_y);
                 desiredFs = 100;
                 [p, q] = rat(desiredFs/originalFs);
-                oneStride = resample(oneStride, p, q)';
+                oneStride_y = resample(oneStride_y, p, q)';
+                oneStride_z = resample(oneStride_z, p, q)';
 
                 % Storing oneStride into strides
                 % strides(:, k) = oneStride;
                 % k = k + 1;
 
                 % Append oneStride to strides matrix
-                strides(:, end+1) = oneStride;
+                strides_y(:, end+1) = oneStride_y;
+                strides_z(:, end+1) = oneStride_z;
             end
         end
     end
 end
 
 % Plot the strides if needed
-% plot(strides);
+figure;
+plot(strides_y);
+hold on;
+plot(strides_z);
+hold off;
 
 %% Stride Segmentation
 
