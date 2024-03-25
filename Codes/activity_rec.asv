@@ -429,55 +429,34 @@ legend('Filtered Gyro Y', 'Activity Label');
 %% Analyzing Gyro-Z data for Turn-detection
 
 % Define window size for integration
-window_size = 10;
+window_size_integration = 5; % Adjust as needed
 
-% Initialize arrays to store integrated values
-integrated_filtGyroY = zeros(size(DataFull_labeled, 1), 1);
-integrated_filtGyroZ = zeros(size(DataFull_labeled, 1), 1);
+% Initialize array to store integrated values
+integrated_values = zeros(size(filtGyroZ));
 
-% Integrate filtGyroY and filtGyroZ data for activity segments
-for i = 1:size(activity_segments, 1)
-    % Extract segment of filtGyroY and filtGyroZ data
-    filtGyroY_activity_segment = filtGyroY(activity_segments(i, 1):activity_segments(i, 2));
-    filtGyroZ_activity_segment = filtGyroZ(activity_segments(i, 1):activity_segments(i, 2));
+% Iterate over filtGyroZ data in windows
+for i = 1:window_size_integration:length(filtGyroZ)
+    % Define the indices for the current window
+    window_indices = i:min(i+window_size_integration-1, length(filtGyroZ));
     
-    % Divide the segment into smaller windows
-    num_windows = ceil(length(filtGyroY_activity_segment) / window_size);
+    % Integrate the current window using trapz
+    integrated_segment = trapz(window_indices, filtGyroZ(window_indices));
     
-    % Integrate each window using trapz
-    for j = 1:num_windows
-        % Calculate window indices
-        start_idx = (j - 1) * window_size + 1;
-        end_idx = min(j * window_size, length(filtGyroY_activity_segment));
-        window_indices = start_idx:end_idx;
-        
-        % Integrate the current window using trapz if window_indices is not empty
-        if ~isempty(window_indices)
-            integrated_segment_Y = trapz(filtGyroY_activity_segment(window_indices));
-            integrated_segment_Z = trapz(filtGyroZ_activity_segment(window_indices));
-        else
-            integrated_segment_Y = 0; % Set to 0 if window_indices is empty
-            integrated_segment_Z = 0; % Set to 0 if window_indices is empty
-        end
-        
-        % Store the integrated value for each window
-        integrated_filtGyroY(activity_segments(i, 1) + start_idx - 1) = integrated_segment_Y;
-        integrated_filtGyroZ(activity_segments(i, 1) + start_idx - 1) = integrated_segment_Z;
-    end
+    % Store the integrated value for the current window
+    integrated_values(window_indices) = integrated_segment;
 end
 
-% Plot filtGyroY, filtGyroZ, and their integrated values in one plot
+% Plot filtGyroZ and integrated values
 figure;
-plot(filtGyroY, 'b', 'LineWidth', 1.5);
+plot(1:length(filtGyroZ), filtGyroZ, 'b', 'LineWidth', 1.5);
 hold on;
-plot(filtGyroZ, 'r', 'LineWidth', 1.5);
-plot(integrated_filtGyroY, 'g--', 'LineWidth', 1.5);
-plot(integrated_filtGyroZ, 'm--', 'LineWidth', 1.5);
+plot(1:length(integrated_values), integrated_values, 'r', 'LineWidth', 1.5);
 hold off;
 xlabel('No. of Packets');
-ylabel('Data / Integrated Data');
-title('Filtered Gyro Y and Z Data with Integrated Values');
-legend('Filtered Gyro Y', 'Filtered Gyro Z', 'Integrated Gyro Y', 'Integrated Gyro Z');
+ylabel('Data');
+title('Filtered Gyro Z Data and Integrated Gyro Z Data');
+legend('Filtered Gyro Z', 'Integrated Gyro Z');
+
 
 
 %% Stride Segmentation with Activity Segments
