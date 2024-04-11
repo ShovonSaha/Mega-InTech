@@ -100,7 +100,7 @@
 % DataGyroX = DataFull(:,12);
 % DataGyroZ = DataFull(:,14);
 
-%% Changing directory to the folder where the data file exists
+%% Changing directory for JULIA and DAVE's data folders:
 
 % JULIA's DATA
 
@@ -116,7 +116,7 @@
 % Dave
 % cd 'C:\Users\shovo\OneDrive - University of Waterloo\Documents\NRE Lab\Mega InTech\Dave_Data\ImpactSense'
 
-%% Processing JULIA and DAVE's DATA: Reading csv file and extracting data
+%% Processing DATA: Reading csv file and extracting data
 
 % No Activity = 0
 % 
@@ -218,11 +218,18 @@
 clear all;
 close all;
 
+% Changing directory for TURNING data folders:
+cd 'C:\Users\shovo\OneDrive - University of Waterloo\Documents\NRE Lab\Mega InTech\Turning_Data\180_slow_normal_fast'
+DataFull = readmatrix('Right_180_slow_normal_fast.csv');   
+
+% Julia_20231206
+% cd 'C:\Users\shovo\OneDrive - University of Waterloo\Documents\NRE Lab\Mega InTech\Julia_Data\Julia_20231206\ImpactSense'
+
 % Date: Julia_20231206 (06 December, 2023)
-cd 'C:\Users\shovo\OneDrive - University of Waterloo\Documents\NRE Lab\Mega InTech\Julia_Data\Julia_20231206\ImpactSense'
+% cd 'C:\Users\shovo\OneDrive - University of Waterloo\Documents\NRE Lab\Mega InTech\Julia_Data\Julia_20231206\ImpactSense'
 
 % Dataset_2: HMWM010117
-DataFull = readmatrix('Julia_20231206_ImpactSense_HMWM010117Jidf_Left_EE4623FE1AA4_06122023091408.csv');   
+% DataFull = readmatrix('Julia_20231206_ImpactSense_HMWM010117Jidf_Left_EE4623FE1AA4_06122023091408.csv');   
 % DataFull = readmatrix('Julia_20231206_ImpactSense_HMWM010117Jidf_Right_D8F779651FCC_06122023090957.csv');
 
 % Datafull Field Names and Column No.
@@ -291,11 +298,15 @@ filtGyroY = -lowpass(DataGyroY,2/100); % The (-) sign needs to be removed put in
 filtGyroZ = -lowpass(DataGyroZ,2/100);
 
 
-% figure;
-% plot(-filtGyroY);
-% hold on;
-% plot(-filtGyroZ);
-% hold off;
+figure;
+plot(-filtGyroY);
+hold on;
+plot(-filtGyroZ);
+hold off;
+xlabel('No. of Packets');
+ylabel('Gyro');
+title('Filtered Gyro Y & Gyro Z');
+legend('Filtered Gyro Y', 'Filtered Gyro Z');
 
 
 % filtGyroY = lowpass(DataGyroY,5/100);
@@ -574,6 +585,88 @@ ylabel('Data / Integrated Data');
 title('Filtered Gyro Y and Z Data with Integrated Values and Turn Segments');
 legend('Filtered Gyro Z', 'Integrated Gyro Z', 'Activity Label', 'Significant Points', 'Turn Segments');
 
+
+%% Calculate Standard Deviation in Activity Segments and Plot Data
+
+% Define window size for activity segments
+window_size = 15;
+
+% Initialize array to store standard deviation values
+std_dev_values = zeros(size(DataFull_labeled, 1), 1);
+
+% Calculate standard deviation of filtered gyro Y signal in activity segments
+for i = 1:size(activity_segments, 1)
+    % Extract segment of filtered gyro Y data
+    filtGyroY_activity_segment = filtGyroY(activity_segments(i, 1):activity_segments(i, 2));
+    
+    % Calculate standard deviation of the segment
+    std_dev_segment = std(filtGyroY_activity_segment);
+    
+    % Store the standard deviation value for each packet in the segment
+    std_dev_values(activity_segments(i, 1):activity_segments(i, 2)) = std_dev_segment;
+end
+
+% Plot filtered gyro Y data, standard deviation, and activity segment marks
+figure;
+plot(filtGyroY, 'b', 'LineWidth', 1.5);
+hold on;
+plot(std_dev_values, 'r', 'LineWidth', 1.5);
+plot(DataFull_labeled(:, 16), 'k', 'LineWidth', 1.5);
+hold off;
+xlabel('No. of Packets');
+ylabel('Data / Standard Deviation');
+title('Filtered Gyro Y Data with Standard Deviation and Activity Segments');
+legend('Filtered Gyro Y', 'Standard Deviation', 'Activity Segments');
+
+%% Dynamic thresholding
+
+% Parameters
+window_size = 10; % Window size for smoothing
+alpha = 0.2; % Smoothing parameter for exponential smoothing
+
+% Initialize arrays
+integrated_filtGyroZ = zeros(size(DataFull_labeled, 1), 1);
+gyroY_std_dev = zeros(size(DataFull_labeled, 1), 1);
+threshold = zeros(size(DataFull_labeled, 1), 1);
+
+% Integrate filtGyroZ data for activity segments
+for i = 1:size(activity_segments, 1)
+    % Extract segment of filtGyroZ data
+    filtGyroZ_activity_segment = filtGyroZ(activity_segments(i, 1):activity_segments(i, 2));
+    
+    % Integrate the segment using cumtrapz
+    integrated_segment_Z = cumtrapz(filtGyroZ_activity_segment);
+    
+    % Store the integrated value for each packet
+    integrated_filtGyroZ(activity_segments(i, 1):activity_segments(i, 2)) = integrated_segment_Z;
+    
+    % Calculate standard deviation of gyro Y signal for the segment
+    gyroY_std_dev(activity_segments(i, 1):activity_segments(i, 2)) = std(filtGyroY(activity_segments(i, 1):activity_segments(i, 2)));
+end
+
+% Calculate threshold using combined thresholding
+threshold = gyroY_std_dev + max(integrated_filtGyroZ) * 0.1; % Adjust the factor as needed
+
+% Initialize dynamic threshold
+dynamic_threshold = zeros(size(DataFull_labeled, 1), 1);
+
+% Dynamic Threshold Adjustment using exponential smoothing
+for i = 2:length(threshold)
+    dynamic_threshold(i) = alpha * threshold(i) + (1 - alpha) * dynamic_threshold(i-1);
+end
+
+% Plot filtered gyro Y data, standard deviation, and activity segment marks
+figure;
+plot(filtGyroY, 'b', 'LineWidth', 1.5);
+hold on;
+plot(gyroY_std_dev, 'g--', 'LineWidth', 1.5);
+plot(DataFull_labeled(:, 16), 'k', 'LineWidth', 1.5);
+plot(dynamic_threshold, 'r', 'LineWidth', 1.5);
+hold off;
+xlabel('No. of Packets');
+ylabel('Data / Threshold');
+title('Filtered Gyro Y Data, Standard Deviation, and Activity Segments');
+legend('Filtered Gyro Y', 'Standard Deviation', 'Activity Segments', 'Dynamic Threshold');
 
 
 %% Stride Segmentation with Activity Segments
