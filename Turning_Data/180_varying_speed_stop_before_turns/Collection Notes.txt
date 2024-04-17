@@ -1,0 +1,12 @@
+Sensor Setup::
+ImpactSense Setup: 'Center' writing on ImpactSense facing towards myself.
+Gaitup: Did not wear them this time.
+
+
+Collection protocol:: 
+
+Pause --- Walk --- Pause --- TURN --- Pause --- Walk --- Pause --- 
+
+Types of turns- 180 degree: Slow, Normal and Fast turning.
+Used the space infront of the lab (corridor).
+

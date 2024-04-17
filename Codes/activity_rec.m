@@ -220,7 +220,11 @@ close all;
 
 % Changing directory for TURNING data folders:
 cd 'C:\Users\shovo\OneDrive - University of Waterloo\Documents\NRE Lab\Mega InTech\Turning_Data\180_slow_normal_fast'
-DataFull = readmatrix('Right_180_slow_normal_fast.csv');   
+DataFull = readmatrix('Right_180_slow_normal_fast.csv'); 
+
+% cd 'C:\Users\shovo\OneDrive - University of Waterloo\Documents\NRE Lab\Mega InTech\Turning_Data\180_varying_speed_stop_before_turns'
+% DataFull = readmatrix('Right_180_slow_normal_fast.csv'); 
+
 
 % Julia_20231206
 % cd 'C:\Users\shovo\OneDrive - University of Waterloo\Documents\NRE Lab\Mega InTech\Julia_Data\Julia_20231206\ImpactSense'
@@ -238,24 +242,24 @@ DataFull = readmatrix('Right_180_slow_normal_fast.csv');
 
 
 
-% % Extract gyroscope and accelerometer data
-% DataGyroX = DataFull(:, 12);
-% DataGyroY = DataFull(:, 13);
-% DataGyroZ = DataFull(:, 14);
-% DataAccX = DataFull(:, 9);
-% DataAccY = DataFull(:, 10);
-% DataAccZ = DataFull(:, 11);
-% 
-% % Create no. of packets vector
-% packets = DataFull(:, 1); 
-% 
-% FilteredDataGyroX = -lowpass(DataGyroX,2/100);
-% FilteredDataGyroY = -lowpass(DataGyroY,2/100);
-% FilteredDataGyroZ = -lowpass(DataGyroZ,2/100);
-% FilteredDataAccX = -lowpass(DataAccX,2/100);
-% FilteredDataAccY = -lowpass(DataAccY,2/100);
-% FilteredDataAccZ = -lowpass(DataAccZ,2/100);
-% 
+% Extract gyroscope and accelerometer data
+DataGyroX = DataFull(:, 12);
+DataGyroY = DataFull(:, 13);
+DataGyroZ = DataFull(:, 14);
+DataAccX = DataFull(:, 9);
+DataAccY = DataFull(:, 10);
+DataAccZ = DataFull(:, 11);
+
+% Create no. of packets vector
+packets = DataFull(:, 1); 
+
+FilteredDataGyroX = -lowpass(DataGyroX,2/100);
+FilteredDataGyroY = -lowpass(DataGyroY,2/100);
+FilteredDataGyroZ = -lowpass(DataGyroZ,2/100);
+FilteredDataAccX = -lowpass(DataAccX,2/100);
+FilteredDataAccY = -lowpass(DataAccY,2/100);
+FilteredDataAccZ = -lowpass(DataAccZ,2/100);
+
 % % Plot filtered gyroscope data
 % figure;
 % subplot(2, 1, 1);
@@ -274,6 +278,24 @@ DataFull = readmatrix('Right_180_slow_normal_fast.csv');
 % ylabel('Filtered Accelerometer Data');
 % legend('AccX', 'AccY', 'AccZ');
 % title('Filtered Accelerometer Data');
+
+
+% Filtered Gyro Z and Accelerometer Y Data
+
+% figure;
+% 
+% % Plot filtered Gyro Z data
+% plot(packets, FilteredDataGyroZ, 'b');
+% hold on;
+% 
+% % Plot filtered Acceleration Y data
+% plot(packets, FilteredDataAccY, 'g');
+% hold off;
+% 
+% xlabel('No. of Packets');
+% ylabel('Filtered Data');
+% title('Filtered Gyro Z and Accelerometer Y Data');
+% legend('Gyro Z', 'Acceleration Y');
 
 %% Filtering loaded data using a low-pass filter
 % New filter parameter after discussion with James and Ranjani
@@ -620,53 +642,46 @@ legend('Filtered Gyro Y', 'Standard Deviation', 'Activity Segments');
 
 %% Dynamic thresholding
 
-% Parameters
-window_size = 10; % Window size for smoothing
-alpha = 0.2; % Smoothing parameter for exponential smoothing
+%% Calculate Dynamic Threshold and Detect Turns
 
-% Initialize arrays
-integrated_filtGyroZ = zeros(size(DataFull_labeled, 1), 1);
-gyroY_std_dev = zeros(size(DataFull_labeled, 1), 1);
-threshold = zeros(size(DataFull_labeled, 1), 1);
+% Define multiplier for dynamic threshold (adjust as needed)
+std_dev_multiplier = 2;
 
-% Integrate filtGyroZ data for activity segments
-for i = 1:size(activity_segments, 1)
-    % Extract segment of filtGyroZ data
-    filtGyroZ_activity_segment = filtGyroZ(activity_segments(i, 1):activity_segments(i, 2));
+% Calculate dynamic threshold based on standard deviation of gyro Y data
+dynamic_threshold = std_dev_multiplier * std_dev_values;
+
+% Initialize an array to store the labeled turning segments
+turn_segments = zeros(size(DataFull_labeled, 1), 1);
+
+% Find the indices where the absolute value of integrated_filtGyroZ exceeds the dynamic threshold
+significant_indices = find(abs_integrated_filtGyroZ > dynamic_threshold);
+
+% Iterate over the significant indices and label the turning segments
+window_size = 10; % Window size for turning segments
+for i = 1:length(significant_indices)
+    % Find the start and end indices of the segment around the threshold crossing
+    start_idx = max(significant_indices(i) - window_size, 1);
+    end_idx = min(significant_indices(i) + window_size, size(DataFull_labeled, 1));
     
-    % Integrate the segment using cumtrapz
-    integrated_segment_Z = cumtrapz(filtGyroZ_activity_segment);
-    
-    % Store the integrated value for each packet
-    integrated_filtGyroZ(activity_segments(i, 1):activity_segments(i, 2)) = integrated_segment_Z;
-    
-    % Calculate standard deviation of gyro Y signal for the segment
-    gyroY_std_dev(activity_segments(i, 1):activity_segments(i, 2)) = std(filtGyroY(activity_segments(i, 1):activity_segments(i, 2)));
+    % Label the segment in turn_segments
+    turn_segments(start_idx:end_idx) = 15000;
 end
 
-% Calculate threshold using combined thresholding
-threshold = gyroY_std_dev + max(integrated_filtGyroZ) * 0.1; % Adjust the factor as needed
+%% Plot Gyro Signals, Thresholds, Activity Segments, and Turning Segments
 
-% Initialize dynamic threshold
-dynamic_threshold = zeros(size(DataFull_labeled, 1), 1);
-
-% Dynamic Threshold Adjustment using exponential smoothing
-for i = 2:length(threshold)
-    dynamic_threshold(i) = alpha * threshold(i) + (1 - alpha) * dynamic_threshold(i-1);
-end
-
-% Plot filtered gyro Y data, standard deviation, and activity segment marks
+% Plot filtered gyro Y data, standard deviation, dynamic threshold, activity segments, and turning segments
 figure;
 plot(filtGyroY, 'b', 'LineWidth', 1.5);
 hold on;
-plot(gyroY_std_dev, 'g--', 'LineWidth', 1.5);
+plot(std_dev_values, 'r', 'LineWidth', 1.5);
+plot(dynamic_threshold, 'g--', 'LineWidth', 1.5);
 plot(DataFull_labeled(:, 16), 'k', 'LineWidth', 1.5);
-plot(dynamic_threshold, 'r', 'LineWidth', 1.5);
+plot(turn_segments, 'm', 'LineWidth', 1.5);
 hold off;
 xlabel('No. of Packets');
 ylabel('Data / Threshold');
-title('Filtered Gyro Y Data, Standard Deviation, and Activity Segments');
-legend('Filtered Gyro Y', 'Standard Deviation', 'Activity Segments', 'Dynamic Threshold');
+title('Filtered Gyro Y Data, Standard Deviation, Dynamic Threshold, Activity Segments, and Turning Segments');
+legend('Filtered Gyro Y', 'Standard Deviation', 'Dynamic Threshold', 'Activity Segments', 'Turning Segments');
 
 
 %% Stride Segmentation with Activity Segments
