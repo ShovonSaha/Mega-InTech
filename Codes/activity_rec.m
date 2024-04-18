@@ -4,103 +4,7 @@
 % clear all;
 % close all;
 
-%% Changing directory to the folder where the data file exists
-
-% Just walking strides. Small sample connected for tuning algorithm. Also
-% for Running
-% cd 'C:\Users\shovo\OneDrive - University of Waterloo\Documents\NRE Lab\MegaIntech\DATA for Filtration_Stride _Orientation'
-
-% % Right Walking Combined:
-% cd 'C:\Users\shovo\OneDrive - University of Waterloo\Desktop\Training Data\Walking\Right Walking Data'
-
-% % Right Stairs Ascent Combined:
-% cd 'C:\Users\shovo\OneDrive - University of Waterloo\Desktop\Training Data\Stairs\Stairs Ascent\Right'
-
-% Right Stairs Descent Combined:
-% cd 'C:\Users\shovo\OneDrive - University of Waterloo\Desktop\Training Data\Stairs\Stairs Descent\Right'
-
-% % Running and Standing:
-% cd 'C:\Users\shovo\OneDrive - University of Waterloo\Mega Intech Data Collection\25_April_2023\Ramisha\Running and Standing'
-
-
-%% Importing full csv file as a matrix
-
-% Testing out new clips
-% DataFull = readmatrix('Left_new_clips.csv');
-% DataFull = readmatrix('Right_new_clips.csv');
-
-% % Mixed activities analysis: Walking_TM >> Running >> Walking_TM >> Walking >> Stairs Descent >> Walking >> Stairs Ascent >> Walking >>
-% Walking_TM >> Running >> Walking (to the computer)
-
-% DataFull = readmatrix('Right_mixed_act.csv');
-% DataFull = readmatrix('Left_mixed_act.csv');
-
-% DataFull = readmatrix('Left_sakib_mixed.csv');
-% DataFull = readmatrix('Right_sakib_mixed.csv');
-
-% DataFull = readmatrix('Left_ramisha_mixed.csv');
-% DataFull = readmatrix('Right_ramisha_mixed.csv');
-
-% Tablet test files
-% DataFull = readmatrix('Right_test.csv');
-% DataFull = readmatrix('Left_test.csv');
-
-% % Adam Stairs Ascent/Descent and Running Data
-% DataFull = readmatrix('Left_stairs_ascent_descent_Adam.csv');
-% DataFull = readmatrix('Right_stairs_ascent_descent_Adam.csv');
-% DataFull = readmatrix('Right_running_Adam.csv');
-% DataFull = readmatrix('Left_running_Adam.csv');
-
-% % Right and Left small random data:
-% DataFull = readmatrix('Right_rand.csv');
-% DataFull = readmatrix('Left_rand.csv');
-
-% % Right Running and Standing:
-% DataFull = readmatrix('Left_running_standing_ramisha.csv');
-
-% % Just walking strides. Small sample connected for filtration
-% DataFull = readmatrix('Right_data_for_stride_tapped.csv');
-% DataFull = readmatrix('Left_data_for_stride.csv');
-
-% % Right Walking Combined:
-% DataFull = readmatrix('RightWalkingCOMBINED.csv');
-
-% % Left Mixed Data:
-% DataFull = readmatrix('Left_Descent_Walk_Ascent_Walk.csv');
-
-% % Right Stairs Ascent Combined:
-% DataFull = readmatrix('RightStairsAscentCOMBINED.csv');
-
-% Right Stairs Descent Combined:
-% DataFull = readmatrix('RightStairsDescentCOMBINED.csv');
-
-% % Left Stairs and Walking (TAPED): Stairs Descent -> Ascent -> Walking
-% DataFull = readmatrix('Left_stairs_walking.csv');
-
-%% Reading only GyroY Data. [Updated to GyroY from GyroX after checking the
-% orientation of the new set of sensors.
-% % 20 Strides
-% DataGyroY = DataFull(1804:4273,13);
-
-% Left (without tapped)
-% DataGyroY = DataFull(2974:5328,13);
-
-% % Right Running and Standing:
-% DataGyroY = DataFull(:,13);
-
-% DataGyroY = DataFull(:,13);
-
-% Other Gyros
-% DataGyroX = DataFull(:,12);
-% DataGyroZ = DataFull(:,14);
-
-% DataGyroY = DataFull(:,13);
-
-% Other Gyros
-% DataGyroX = DataFull(:,12);
-% DataGyroZ = DataFull(:,14);
-
-%% Changing directory for JULIA and DAVE's data folders:
+%% ARCHIEVED: Changing directory for JULIA and DAVE's data folders:
 
 % JULIA's DATA
 
@@ -116,7 +20,7 @@
 % Dave
 % cd 'C:\Users\shovo\OneDrive - University of Waterloo\Documents\NRE Lab\Mega InTech\Dave_Data\ImpactSense'
 
-%% Processing DATA: Reading csv file and extracting data
+%% ARCHIEVED: Reading matrices
 
 % No Activity = 0
 % 
@@ -213,52 +117,67 @@
 % DataFull = readmatrix('Dave_20240306185547_Dave_Left_EE4623FE1AA4_06032024015352.csv'); 
 % DataFull = readmatrix('Dave_20240306185547_Dave_Right_D8F779651FCC_06032024015118.csv'); 
 
-%% Plotting all of the gyro and acc data for analysis
+%% Changing directory to recent data files
 
 clear all;
 close all;
 
 % Changing directory for TURNING data folders:
-cd 'C:\Users\shovo\OneDrive - University of Waterloo\Documents\NRE Lab\Mega InTech\Turning_Data\180_slow_normal_fast'
-DataFull = readmatrix('Right_180_slow_normal_fast.csv'); 
-
-% cd 'C:\Users\shovo\OneDrive - University of Waterloo\Documents\NRE Lab\Mega InTech\Turning_Data\180_varying_speed_stop_before_turns'
+% cd 'C:\Users\shovo\OneDrive - University of Waterloo\Documents\NRE Lab\Mega InTech\Turning_Data\180_slow_normal_fast'
 % DataFull = readmatrix('Right_180_slow_normal_fast.csv'); 
 
-
-% Julia_20231206
-% cd 'C:\Users\shovo\OneDrive - University of Waterloo\Documents\NRE Lab\Mega InTech\Julia_Data\Julia_20231206\ImpactSense'
-
-% Date: Julia_20231206 (06 December, 2023)
-% cd 'C:\Users\shovo\OneDrive - University of Waterloo\Documents\NRE Lab\Mega InTech\Julia_Data\Julia_20231206\ImpactSense'
-
-% Dataset_2: HMWM010117
-% DataFull = readmatrix('Julia_20231206_ImpactSense_HMWM010117Jidf_Left_EE4623FE1AA4_06122023091408.csv');   
-% DataFull = readmatrix('Julia_20231206_ImpactSense_HMWM010117Jidf_Right_D8F779651FCC_06122023090957.csv');
+cd 'C:\Users\shovo\OneDrive - University of Waterloo\Documents\NRE Lab\Mega InTech\Turning_Data\180_varying_speed_stop_before_turns'
+% DataFull = readmatrix('Right_varying_speed_turning.csv');
+DataFull = readmatrix('Left_varying_speed_turning.csv');
 
 % Datafull Field Names and Column No.
 % Packet#	 Month	 Day	 Year	 Hour	 Minute	 Second	 MS	 ACC X	 ACC Y	 ACC Z	 GYR X	 GYR Y	 GYR Z
 %   1	       2	  3	       4	  5	        6	    7	  8	   9	  10       11      12	  13       14 
 
+%% Filtering loaded data using a low-pass filter
 
-
-% Extract gyroscope and accelerometer data
-DataGyroX = DataFull(:, 12);
-DataGyroY = DataFull(:, 13);
+% If the columns were not removed
+DataGyroY = DataFull(:,13);
 DataGyroZ = DataFull(:, 14);
-DataAccX = DataFull(:, 9);
-DataAccY = DataFull(:, 10);
-DataAccZ = DataFull(:, 11);
 
-% Create no. of packets vector
-packets = DataFull(:, 1); 
+filtGyroY = lowpass(DataGyroY,2/100); % The (-) sign needs to be removed put infront of the (-)lowpass() to reverse the signal
+filtGyroZ = lowpass(DataGyroZ,2/100);
 
-FilteredDataGyroX = -lowpass(DataGyroX,2/100);
-FilteredDataGyroY = -lowpass(DataGyroY,2/100);
-FilteredDataGyroZ = -lowpass(DataGyroZ,2/100);
-FilteredDataAccX = -lowpass(DataAccX,2/100);
-FilteredDataAccY = -lowpass(DataAccY,2/100);
-FilteredDataAccZ = -lowpass(DataAccZ,2/100);
+
+% figure;
+% plot(-filtGyroY);
+% hold on;
+% plot(-filtGyroZ);
+% hold off;
+% xlabel('No. of Packets');
+% ylabel('Gyro');
+% title('Filtered Gyro Y & Gyro Z');
+% legend('Filtered Gyro Y', 'Filtered Gyro Z');
+
+
+% filtGyroY = lowpass(DataGyroY,5/100);
+
+
+
+
+%% Extracting & plotting gyroscope and accelerometer data 
+
+% DataGyroX = DataFull(:, 12);
+% DataGyroY = DataFull(:, 13);
+% DataGyroZ = DataFull(:, 14);
+% DataAccX = DataFull(:, 9);
+% DataAccY = DataFull(:, 10);
+% DataAccZ = DataFull(:, 11);
+% 
+% % Create no. of packets vector
+% packets = DataFull(:, 1); 
+% 
+% FilteredDataGyroX = -lowpass(DataGyroX,2/100);
+% FilteredDataGyroY = -lowpass(DataGyroY,2/100);
+% FilteredDataGyroZ = -lowpass(DataGyroZ,2/100);
+% FilteredDataAccX = -lowpass(DataAccX,2/100);
+% FilteredDataAccY = -lowpass(DataAccY,2/100);
+% FilteredDataAccZ = -lowpass(DataAccZ,2/100);
 
 % % Plot filtered gyroscope data
 % figure;
@@ -280,7 +199,7 @@ FilteredDataAccZ = -lowpass(DataAccZ,2/100);
 % title('Filtered Accelerometer Data');
 
 
-% Filtered Gyro Z and Accelerometer Y Data
+%% Filtered Gyro Z and Accelerometer Y Data
 
 % figure;
 % 
@@ -297,50 +216,10 @@ FilteredDataAccZ = -lowpass(DataAccZ,2/100);
 % title('Filtered Gyro Z and Accelerometer Y Data');
 % legend('Gyro Z', 'Acceleration Y');
 
-%% Filtering loaded data using a low-pass filter
-% New filter parameter after discussion with James and Ranjani
-% % filtGyroY = lowpass(DataGyroX,0.502654824); % New filter. Old one works
-% better
-
-% % Remove columns 9 to 12 from DataFull
-% DataFull(:, 9:12) = [];
-
-% Now DataFull contains all columns except columns 9 to 12
-% Packet#	 Month	 Day	 Year	 Hour	 Minute	 Second	 MS	 GYR Y	 GYR Z
-%   1	       2	  3	       4	  5	        6	    7	  8	   9	  10
-
-% % After removing the columns
-% DataGyroY = DataFull(:,9);
-
-% If the columns were not removed
-DataGyroY = DataFull(:,13);
-DataGyroZ = DataFull(:, 14);
-
-filtGyroY = -lowpass(DataGyroY,2/100); % The (-) sign needs to be removed put infront of the (-)lowpass() to reverse the signal
-filtGyroZ = -lowpass(DataGyroZ,2/100);
-
-
-figure;
-plot(-filtGyroY);
-hold on;
-plot(-filtGyroZ);
-hold off;
-xlabel('No. of Packets');
-ylabel('Gyro');
-title('Filtered Gyro Y & Gyro Z');
-legend('Filtered Gyro Y', 'Filtered Gyro Z');
-
-
-% filtGyroY = lowpass(DataGyroY,5/100);
-
-% Old filter parameter
-% filtGyroY = lowpass(DataGyroX,8/100);
-% [filtGyroY,d]= lowpass(DataGyroX,8/100,100);
-
 %% Activity or No-activity detection
 
 % Define parameters
-window_size = 15;
+window_size = 65;
 activity_threshold = 100; % Adjust as needed
 high_val = 10000;
 
@@ -368,486 +247,202 @@ end
 % Append the labels to the DataFull matrix as the 15th column
 DataFull_labeled = [DataFull, labels];
 
-
-% 3 Window -threshold based activity/no-activity labelling
-consecutive_windows = 20; % Number of consecutive windows required for labeling
-
-% Initialize activity counters
-activity_counter = 0;
-no_activity_counter = 0;
-
-% Initialize the 16th column of DataFull_labeled
-DataFull_labeled(:, 16) = 0;
-
-% Iterate through the 15th column of DataFull_labeled
-for i = 1:length(DataFull_labeled) - window_size + 1
-    % Extract the window of activity labels
-    window_labels = DataFull_labeled(i:i+window_size-1, 15);
-
-    % Count the number of activity and no activity labels in the window
-    num_activity = sum(window_labels);
-    num_no_activity = window_size - num_activity;
-
-    % Check if the number of activity or no activity labels exceeds the threshold
-    if num_activity >= activity_threshold * window_size
-        activity_counter = activity_counter + 1;
-        no_activity_counter = 0;
-    elseif num_no_activity >= (1 - activity_threshold) * window_size
-        activity_counter = 0;
-        no_activity_counter = no_activity_counter + 1;
-    else
-        activity_counter = 0;
-        no_activity_counter = 0;
-    end
-
-    % Label the 16th column based on consecutive activity or no activity windows
-    if activity_counter >= consecutive_windows
-        DataFull_labeled(i:i+window_size-1, 16) = high_val; % Label as activity
-    elseif no_activity_counter >= consecutive_windows
-        DataFull_labeled(i:i+window_size-1, 16) = 0; % Label as no activity
-    end
-end
-
-% Define parameters
-min_segment_length = 60; % Minimum length of a segment to be retained
-
-% Initialize activity and no activity segments
-activity_segments = []; % 
-no_activity_segments = [];
-
-% Extract segments of activity and no activity
-for i = 1:length(DataFull_labeled)
-    if DataFull_labeled(i, 16) == high_val
-        if isempty(activity_segments) || activity_segments(end, 2) < i-1
-            activity_segments = [activity_segments; i, i];
-        else
-            activity_segments(end, 2) = i;
-        end
-    else
-        if isempty(no_activity_segments) || no_activity_segments(end, 2) < i-1
-            no_activity_segments = [no_activity_segments; i, i];
-        else
-            no_activity_segments(end, 2) = i;
-        end
-    end
-end
-
-% Merge adjacent segments that are below the minimum length threshold
-activity_segments = merge_segments(activity_segments, min_segment_length);
-no_activity_segments = merge_segments(no_activity_segments, min_segment_length);
-
-% Update the 16th column of DataFull_labeled based on the merged segments
-DataFull_labeled(:, 16) = 0; % Reset the 16th column
-for i = 1:size(activity_segments, 1)
-    DataFull_labeled(activity_segments(i, 1):activity_segments(i, 2), 16) = high_val;
-end
-for i = 1:size(no_activity_segments, 1)
-    DataFull_labeled(no_activity_segments(i, 1):no_activity_segments(i, 2), 16) = 0;
-end
-
-% Plot filtGyroY and the 16th column of DataFull_labeled
-figure;
-plot(filtGyroY, 'b', 'LineWidth', 1.5);
-hold on;
-plot(DataFull_labeled(:, 16), 'r', 'LineWidth', 1.5);
-hold off;
-xlabel('No. of Packets');
-ylabel('Data / Activity Label');
-title('Filtered Gyro Y Data and Activity Label');
-legend('Filtered Gyro Y', 'Activity Label');
-
-% merged_segments() initialized at the very end of the file: Function to merge adjacent segments below the minimum length threshold
-
-
-%% Analyzing Gyro-Z data for Turn-detection
-
-% Define window size for integration
-window_size = 10;
-
-% Initialize arrays to store integrated values
-integrated_filtGyroY = zeros(size(DataFull_labeled, 1), 1);
-integrated_filtGyroZ = zeros(size(DataFull_labeled, 1), 1);
-
-% Integrate filtGyroY and filtGyroZ data for activity segments
-for i = 1:size(activity_segments, 1)
-    % Extract segment of filtGyroY and filtGyroZ data
-    filtGyroY_activity_segment = filtGyroY(activity_segments(i, 1):activity_segments(i, 2));
-    filtGyroZ_activity_segment = filtGyroZ(activity_segments(i, 1):activity_segments(i, 2));
-    
-    % Divide the segment into smaller windows
-    num_windows = ceil(length(filtGyroY_activity_segment) / window_size);
-    
-    % Integrate each window using trapz
-    for j = 1:num_windows
-        % Calculate window indices
-        start_idx = (j - 1) * window_size + 1;
-        end_idx = min(j * window_size, length(filtGyroY_activity_segment));
-        window_indices = start_idx:end_idx;
-        
-        % Integrate the current window using trapz if window_indices is not empty
-        if ~isempty(window_indices)
-            integrated_segment_Y = trapz(filtGyroY_activity_segment(window_indices));
-            integrated_segment_Z = trapz(filtGyroZ_activity_segment(window_indices));
-        else
-            integrated_segment_Y = 0; % Set to 0 if window_indices is empty
-            integrated_segment_Z = 0; % Set to 0 if window_indices is empty
-        end
-        
-        % Store the integrated value for each window
-        integrated_filtGyroY(activity_segments(i, 1) + start_idx - 1) = integrated_segment_Y;
-        integrated_filtGyroZ(activity_segments(i, 1) + start_idx - 1) = integrated_segment_Z;
-    end
-end
-
-
-% % Plot filtGyroY, filtGyroZ, and their integrated values in one plot
+% Plot Filtered Gyro Y Data and Activity Label
 % figure;
 % plot(filtGyroY, 'b', 'LineWidth', 1.5);
 % hold on;
-% plot(filtGyroZ, 'r', 'LineWidth', 1.5);
-% % plot(integrated_filtGyroY, 'g--', 'LineWidth', 1.5);
-% plot(integrated_filtGyroZ, 'm--', 'LineWidth', 1.5);
-% plot(DataFull_labeled(:, 16), 'k', 'LineWidth', 1.5);
+% plot(DataFull_labeled(:, 15), 'r', 'LineWidth', 1.5);
 % hold off;
 % xlabel('No. of Packets');
-% ylabel('Data / Integrated Data');
-% title('Filtered Gyro Y and Z Data with Integrated Values');
-% % legend('Filtered Gyro Y', 'Filtered Gyro Z', 'Integrated Gyro Y', 'Integrated Gyro Z');
-% legend('Filtered Gyro Y', 'Filtered Gyro Z', 'Integrated Gyro Z', 'Activity label');
+% ylabel('Data / Activity Label');
+% title('Filtered Gyro Y Data and Activity Label');
+% legend('Filtered Gyro Y', 'Activity Label');
 
 
+%% Turn Detection 
+% Calculate Standard Deviation of Filtered Gyro Z for Each Activity Segment and Detect Turns
 
-% % Detect peaks in the smoothed angular velocity signal
-% [pks, locs] = findpeaks(integrated_filtGyroZ);
-% 
-% % Define the threshold for identifying significant peaks
-% threshold = 30000; % Adjust as needed
-% significant_peaks = pks > threshold;
-% 
-% % Filter out insignificant peaks
-% significant_pks = pks(significant_peaks);
-% significant_locs = locs(significant_peaks);
-% 
-% % Initialize an array to store the labeled segments
-% turn_segments = zeros(size(DataFull_labeled, 1), 1);
-% 
-% % Iterate over the significant peaks
-% for i = 1:length(significant_locs)
-%     % Find the start and end indices of the segment around the peak
-%     start_idx = max(significant_locs(i) - window_size, 1);
-%     end_idx = min(significant_locs(i) + window_size, size(DataFull_labeled, 1));
-% 
-%     % Label the segment in DataFull_labeled(:, 16)
-%     turn_segments(start_idx:end_idx) = 15000;
-% end
-% 
-% % Iterate over the significant peaks
-% for i = 1:length(significant_locs)
-%     % Find the start and end indices of the segment around the peak
-%     start_idx = max(significant_locs(i) - window_size, 1);
-%     end_idx = min(significant_locs(i) + window_size, size(DataFull_labeled, 1));
-% 
-%     % Label the segment in DataFull_labeled(:, 16)
-%     turn_segments(start_idx:end_idx) = 15000;
-% end
-% 
-% % Find indices where the absolute value of integrated_filtGyroZ exceeds the threshold
-% abs_integrated_filtGyroZ = abs(integrated_filtGyroZ);
-% significant_indices = find(abs_integrated_filtGyroZ > threshold);
-% 
-% % Plot filtGyroZ, integrated_filtGyroZ, and the labeled segments in one plot
-% figure;
-% plot(filtGyroZ, 'r', 'LineWidth', 1.5);
-% hold on;
-% plot(integrated_filtGyroZ, 'm--', 'LineWidth', 1.5);
-% plot(DataFull_labeled(:, 16), 'k', 'LineWidth', 1.5);
-% plot(significant_indices, filtGyroZ(significant_indices), 'go', 'MarkerSize', 10); % Plot significant points
-% plot(turn_segments, 'g', 'LineWidth', 1.5);
-% hold off;
-% xlabel('No. of Packets');
-% ylabel('Data / Integrated Data');
-% title('Filtered Gyro Y and Z Data with Integrated Values and Turn Segments');
-% legend('Filtered Gyro Z', 'Integrated Gyro Z', 'Activity Label', 'Significant Points', 'Turn Segments');
+% Initialize the 16th column for storing the standard deviation values
+DataFull_labeled(:, 16) = 0;
 
+% Initialize the 17th column for turn detection flags
+DataFull_labeled(:, 17) = 0;
 
+% Find the start and end indices of each activity segment
+activity_starts = find(diff([0; DataFull_labeled(:, 15) > 0]) == 1);
+activity_ends = find(diff([DataFull_labeled(:, 15) > 0; 0]) == -1);
 
+% % Threshold for turn detection (this might need tuning based on your data)
+turn_threshold = 1.3 * max(std(abs(filtGyroZ)));  % Example threshold as 10% of the maximum standard deviation observed
 
-% Define the threshold for identifying significant peaks
-threshold = 30000; % Adjust as needed
+% Iterate over each activity segment
+for i = 1:length(activity_starts)
+    start_idx = activity_starts(i);
+    end_idx = activity_ends(i);
 
-% Initialize an array to store the labeled segments
-turn_segments = zeros(size(DataFull_labeled, 1), 1);
+    % Calculate the standard deviation of filtGyroZ within the segment
+    segment_std_dev = std(abs(filtGyroZ(start_idx:end_idx)));
 
-% Find the indices where the absolute value of integrated_filtGyroZ exceeds the threshold
-abs_integrated_filtGyroZ = abs(integrated_filtGyroZ);
-significant_indices = find(abs_integrated_filtGyroZ > threshold);
+    % Store the standard deviation in the 16th column for all indices within this segment
+    DataFull_labeled(start_idx:end_idx, 16) = segment_std_dev;
 
-% Iterate over the significant indices and label the segments in DataFull_labeled(:, 16)
-window_size = 10;
-for i = 1:length(significant_indices)
-    % Find the start and end indices of the segment around the threshold crossing
-    start_idx = max(significant_indices(i) - window_size, 1);
-    end_idx = min(significant_indices(i) + window_size, size(DataFull_labeled, 1));
-    
-    % Label the segment in DataFull_labeled(:, 16)
-    turn_segments(start_idx:end_idx) = 15000;
+    % Check if the segment_std_dev exceeds the threshold
+    if segment_std_dev > turn_threshold
+        DataFull_labeled(start_idx:end_idx, 17) = 1;  % Mark as a turn
+    end
 end
 
-% Plot filtGyroZ, integrated_filtGyroZ, and the labeled segments in one plot
+
+%% Plotting with Filtered Gyro Z and Gyro Y Data, Activity Segments, Std Dev, and Turn Segments
+
 figure;
-plot(filtGyroZ, 'r', 'LineWidth', 1.5);
+
+% Plot filtered Gyro Z data
+plot(filtGyroZ, 'b', 'LineWidth', 1.5);
 hold on;
-plot(integrated_filtGyroZ, 'm--', 'LineWidth', 1.5);
-plot(DataFull_labeled(:, 16), 'k', 'LineWidth', 1.5);
-plot(significant_indices, filtGyroZ(significant_indices), 'go', 'MarkerSize', 10); % Plot significant points
-plot(turn_segments, 'g', 'LineWidth', 1.5);
+
+% Plot filtered Gyro Y data
+plot(filtGyroY, 'g', 'LineWidth', 1.5);
+
+% Overlay standard deviation values from the 16th column scaled for visibility
+std_dev_plot = DataFull_labeled(:, 16) * max(filtGyroZ) / max(DataFull_labeled(:, 16));  % Scale to fit plot, adjust as necessary
+plot(std_dev_plot, 'r--', 'LineWidth', 1.5);
+
+% Highlight activity segments visually
+activity_indicator = (DataFull_labeled(:, 15) > 0) * max(filtGyroZ);
+plot(activity_indicator, 'k', 'LineWidth', 0.5); % Using a thin black line to indicate activity periods
+
+% Plot turn segments
+turn_indicator = (DataFull_labeled(:, 17) > 0) * max(filtGyroZ) * 0.8;  % Scaled for visibility
+plot(turn_indicator, 'm', 'LineWidth', 2);
+
 hold off;
-xlabel('No. of Packets');
-ylabel('Data / Integrated Data');
-title('Filtered Gyro Y and Z Data with Integrated Values and Turn Segments');
-legend('Filtered Gyro Z', 'Integrated Gyro Z', 'Activity Label', 'Significant Points', 'Turn Segments');
+
+% Labeling the plot
+xlabel('Sample Number');
+ylabel('Filtered Gyro Data and Std Dev Values');
+title('Filtered Gyro Z and Y Data, Activity Segments, Std Deviation, and Turns');
+legend('Filtered Gyro Z', 'Filtered Gyro Y', 'Standard Deviation per Segment', 'Activity Indicator', 'Turns Detected');
+
+%% Extracting filtGyroY Data from Activity Segments that Do Not Have Turns
+
+% Logical index for activity segments
+activity_segments = DataFull_labeled(:, 15) > 0;
+
+% Logical index for segments without turns
+no_turn_segments = DataFull_labeled(:, 17) == 0;
+
+% Combine conditions: Activity segments that do not have turns
+activity_no_turns = activity_segments & no_turn_segments;
+
+% Extract filtGyroY data where there is activity but no turns
+filtGyroY_activity_no_turns = filtGyroY(activity_no_turns);
+
+% Optional: Display or analyze the extracted data
+disp('Extracted filtGyroY Data from Activity Segments Without Turns:');
+disp(filtGyroY_activity_no_turns);
 
 
-%% Calculate Standard Deviation in Activity Segments and Plot Data
+%% Stride Segmentation with Activity Segments Using activity_no_turns
 
-% Define window size for activity segments
-window_size = 15;
+% Define the minimum peak distance
+min_peak_distance = 60; % Adjust as needed
 
-% Initialize array to store standard deviation values
-std_dev_values = zeros(size(DataFull_labeled, 1), 1);
+% Initialize strides
+strides = [];
 
-% Calculate standard deviation of filtered gyro Y signal in activity segments
-for i = 1:size(activity_segments, 1)
-    % Extract segment of filtered gyro Y data
-    filtGyroY_activity_segment = filtGyroY(activity_segments(i, 1):activity_segments(i, 2));
-    
-    % Calculate standard deviation of the segment
-    std_dev_segment = std(filtGyroY_activity_segment);
-    
-    % Store the standard deviation value for each packet in the segment
-    std_dev_values(activity_segments(i, 1):activity_segments(i, 2)) = std_dev_segment;
+% Recalculate activity_no_turns from DataFull_labeled with no turns
+activity_no_turns = DataFull_labeled(:, 15) > 0 & DataFull_labeled(:, 17) == 0;
+
+% Identify contiguous blocks of true values in activity_no_turns
+segments = find(diff([0; activity_no_turns; 0]));
+starts = segments(1:2:end);
+ends = segments(2:2:end) - 1;
+
+% Run stride segmentation algorithm only for segments longer than min_peak_distance
+for i = 1:length(starts)
+    start_idx = starts(i);
+    end_idx = ends(i);
+
+    % Extract segment of filtGyroY data for Activity Segments
+    filtGyroY_activity_segment = filtGyroY(start_idx:end_idx);
+
+    % Check if the segment is longer than the preset MinPeakDistance
+    if length(filtGyroY_activity_segment) >= min_peak_distance
+        % Run stride segmentation algorithm
+        [peak_y, ind_y] = findpeaks(filtGyroY_activity_segment, 'MinPeakHeight', 200, 'MinPeakProminence', 250, 'MinPeakDistance', min_peak_distance);
+
+        % Process peaks within the segment
+        for peakIter = 2:length(peak_y)
+            if ind_y(peakIter) - ind_y(peakIter-1) > 300
+                continue
+            else
+                oneStride = -filtGyroY_activity_segment(ind_y(peakIter-1):ind_y(peakIter));
+
+                % Normalizing the data and the stride times
+                originalFs = length(oneStride);
+                desiredFs = 100;
+                [p, q] = rat(desiredFs/originalFs);
+                oneStride = resample(oneStride, p, q)';
+
+                % Append oneStride to strides matrix
+                strides(:, end+1) = oneStride;
+            end
+        end
+    end
 end
-
-% Plot filtered gyro Y data, standard deviation, and activity segment marks
-figure;
-plot(filtGyroY, 'b', 'LineWidth', 1.5);
-hold on;
-plot(std_dev_values, 'r', 'LineWidth', 1.5);
-plot(DataFull_labeled(:, 16), 'k', 'LineWidth', 1.5);
-hold off;
-xlabel('No. of Packets');
-ylabel('Data / Standard Deviation');
-title('Filtered Gyro Y Data with Standard Deviation and Activity Segments');
-legend('Filtered Gyro Y', 'Standard Deviation', 'Activity Segments');
-
-%% Dynamic thresholding
-
-%% Calculate Dynamic Threshold and Detect Turns
-
-% Define multiplier for dynamic threshold (adjust as needed)
-std_dev_multiplier = 2;
-
-% Calculate dynamic threshold based on standard deviation of gyro Y data
-dynamic_threshold = std_dev_multiplier * std_dev_values;
-
-% Initialize an array to store the labeled turning segments
-turn_segments = zeros(size(DataFull_labeled, 1), 1);
-
-% Find the indices where the absolute value of integrated_filtGyroZ exceeds the dynamic threshold
-significant_indices = find(abs_integrated_filtGyroZ > dynamic_threshold);
-
-% Iterate over the significant indices and label the turning segments
-window_size = 10; % Window size for turning segments
-for i = 1:length(significant_indices)
-    % Find the start and end indices of the segment around the threshold crossing
-    start_idx = max(significant_indices(i) - window_size, 1);
-    end_idx = min(significant_indices(i) + window_size, size(DataFull_labeled, 1));
-    
-    % Label the segment in turn_segments
-    turn_segments(start_idx:end_idx) = 15000;
-end
-
-%% Plot Gyro Signals, Thresholds, Activity Segments, and Turning Segments
-
-% Plot filtered gyro Y data, standard deviation, dynamic threshold, activity segments, and turning segments
-figure;
-plot(filtGyroY, 'b', 'LineWidth', 1.5);
-hold on;
-plot(std_dev_values, 'r', 'LineWidth', 1.5);
-plot(dynamic_threshold, 'g--', 'LineWidth', 1.5);
-plot(DataFull_labeled(:, 16), 'k', 'LineWidth', 1.5);
-plot(turn_segments, 'm', 'LineWidth', 1.5);
-hold off;
-xlabel('No. of Packets');
-ylabel('Data / Threshold');
-title('Filtered Gyro Y Data, Standard Deviation, Dynamic Threshold, Activity Segments, and Turning Segments');
-legend('Filtered Gyro Y', 'Standard Deviation', 'Dynamic Threshold', 'Activity Segments', 'Turning Segments');
-
-
-%% Stride Segmentation with Activity Segments
-
-% % Define the minimum peak distance
-% min_peak_distance = 60; % Adjust as needed
-% 
-% % Initialize strides
-% strides_y = [];
-% strides_z = [];
-% 
-% % Run stride segmentation algorithm only for segments longer than min_peak_distance
-% for i = 1:length(activity_segments)
-%     % Extract segment of filtGyroY and filtGyroZ data for Activity Segments
-%     filtGyroY_activity_segment = filtGyroY(activity_segments(i, 1):activity_segments(i, 2));
-%     filtGyroZ_activity_segment = filtGyroZ(activity_segments(i, 1):activity_segments(i, 2));
-% 
-%     % Check if the segment is longer than the preset MinPeakDistance
-%     if length(filtGyroY_activity_segment) >= min_peak_distance
-%         % Run stride segmentation algorithm
-%         [peak_y, ind_y] = findpeaks(filtGyroY_activity_segment, 'MinPeakHeight', 200, 'MinPeakProminence', 250, 'MinPeakDistance', min_peak_distance);
-%         % [peak_z, ind_z] = findpeaks(filtGyroZ_activity_segment, 'MinPeakHeight', 200, 'MinPeakProminence', 250, 'MinPeakDistance', min_peak_distance);
-% 
-%         % Process peaks within the segment
-%         % k = 1;
-% 
-%         for peakIter = 2:length(peak_y)
-%             if ind_y(peakIter) - ind_y(peakIter-1) > 300
-%                 continue
-%             else
-%                 oneStride_y = -filtGyroY_activity_segment(ind_y(peakIter-1):ind_y(peakIter));
-%                 oneStride_z = -filtGyroZ_activity_segment(ind_y(peakIter-1):ind_y(peakIter));
-% 
-%                 % Normalizing the data and the stride times
-%                 originalFs = length(oneStride_y);
-%                 desiredFs = 100;
-%                 [p, q] = rat(desiredFs/originalFs);
-%                 oneStride_y = resample(oneStride_y, p, q)';
-%                 oneStride_z = resample(oneStride_z, p, q)';
-% 
-%                 % Storing oneStride into strides
-%                 % strides(:, k) = oneStride;
-%                 % k = k + 1;
-% 
-%                 % Append oneStride to strides matrix
-%                 strides_y(:, end+1) = oneStride_y;
-%                 strides_z(:, end+1) = oneStride_z;
-%             end
-%         end
-%     end
-% end
 
 % Plot the strides if needed
-% figure;
-% plot(strides_y);
-% hold on;
-% plot(strides_z);
-% hold off;
-
-%% Stride Segmentation
-
-% Original tuning values used by Alysson 
-% [peak,ind] = findpeaks((-filtGyroY),'MinPeakHeight',200,'MinPeakProminence',250,'MinPeakDistance',60);
-% 
-% [peak,ind] = findpeaks((filtGyroY),'MinPeakHeight',200,'MinPeakProminence',250,'MinPeakDistance',60); 
-% 
-% k = 1;
-% for peakIter = 2 : length(peak)
-%     if ind(peakIter)-ind(peakIter-1) > 300
-%         continue
-%     else
-%         oneStride = -filtGyroY(ind(peakIter-1):ind(peakIter));
-% 
-% %         Normalizing the data and the stride times
-%         originalFs=length(oneStride);
-%         desiredFs = 100;
-%         [p,q] = rat(desiredFs/originalFs);
-%         oneStride = resample(oneStride,p,q)';
-%         % plot(oneStride);
-% 
-% % Storing oneStride into strides
-%         strides(:,k) = oneStride;
-%         k = k + 1;
-%     end
-% end
-% 
-% % plot(strides);
+figure;
+plot(strides);
 
 
 %% Feature Extraction for Activity Segments
 
-% peakStrideIter = 0;
-% 
-% [m,n] = size(strides_y);
-% 
-% peakStridesMegnitude = zeros(n, 1); % For storing the magnitude of the peaks
-% 
-% features = zeros(n,3);
-% 
-% for peakStrideIter = 1:n 
-% %     Original tuning values used by Alysson
-%     % [peakStrides,indStrides] = findpeaks(strides_y(:,peakStrideIter),'MinPeakProminence',100,'MinPeakHeight',50,'MinPeakDistance',20);
-% 
-%     positive_peak_height = 2000; % Threshold for considering a positive peak
-%     [peakStrides,indStrides] = findpeaks(strides_y(:,peakStrideIter),'MinPeakProminence',100,'MinPeakHeight',positive_peak_height,'MinPeakDistance',20);
-% 
-%     % Storing values of peakStrides for checking stride is Running or
-%     % Stairs Ascent
-%     % Calculate the magnitude as the maximum value of peakStrides
-%     % if ~isempty(peakStrides)
-%     %     peakStridesMegnitude(peakStrideIter) = max(peakStrides);
-%     % end
-% 
-%     % downstairs 1st and second peak and stair ascent and walking
-%     % [peakStrides,indStrides] = findpeaks(strides(:,peakStrideIter),'MinPeakProminence',10,'MinPeakHeight',20,'MinPeakDistance',20);
-% 
-% %     Original tuning values used by Alysson  
-% %     [negPeakStrides,negIndStrides] = findpeaks(-strides(:,peakStrideIter),'MinPeakProminence',125,'MinPeakHeight',20); 
-% 
-%     % walking 2nd peak negative
-%     % 2800 works good with Stairs Descent
-%     % 2600 for walking. Also good for Stairs Descent (might have to design
-%     % the algorithm to classify as Descent when two positive peaks are
-%     % found
-% 
-%     negative_peak_height = 2600; % Threshold for considering a negative peak
-%     [negPeakStrides,negIndStrides] = findpeaks(-strides_y(:,peakStrideIter),'MinPeakProminence',125,'MinPeakHeight',negative_peak_height); 
-% 
-%     % Restricting the analysis from 20 to 80 percent of the strides
-%     % original is set at 125 for both 
-%     negPeakStrides = negPeakStrides((negIndStrides>20) & (negIndStrides<80));
-%     negIndStrides = negIndStrides((negIndStrides>20) & (negIndStrides<80));
-% 
-%     if isempty(peakStrides) && isempty(negPeakStrides)
-%         % disp("Both peakStrides and negPeakStrides are empty")
-%         continue;
-%     elseif isempty(peakStrides) || isempty(negPeakStrides)
-% %     Checking for empty arrays
-%         if isempty(peakStrides)
-%             if ~isempty(negPeakStrides)
-%                 features(peakStrideIter,3) = negIndStrides(1);
-%             end
-%         else
-%             if length(peakStrides)==1
-%                 features(peakStrideIter,1) = indStrides(1);
-%                 features(peakStrideIter,4) = max(peakStrides);
-% 
-%             else length(peakStrides)>1
-%                 features(peakStrideIter,1) = indStrides(1);
-%                 features(peakStrideIter,2) = indStrides(2);
-%                 features(peakStrideIter,4) = max(peakStrides);
-%             end
-%         end
-%     else
-%         if length(peakStrides)==1
-%                 features(peakStrideIter,1) = indStrides(1);
-%                 features(peakStrideIter,3) = negIndStrides(1);
-%                 features(peakStrideIter,4) = max(peakStrides);
-%             else length(peakStrides)>1
-%                 features(peakStrideIter,1) = indStrides(1);
-%                 features(peakStrideIter,2) = indStrides(2);
-%                 features(peakStrideIter,3) = negIndStrides(1);
-%                 features(peakStrideIter,4) = max(peakStrides);
-%         end
-%     end
-% end
+peakStrideIter = 0;
+
+[m,n] = size(strides);
+
+peakStridesMagnitude = zeros(n, 1); % For storing the magnitude of the peaks
+
+features = zeros(n,4); % Adjust the feature array size to include all necessary features
+
+for peakStrideIter = 1:n 
+    % Settings for positive peaks
+    positive_peak_height = 2000; % Threshold for considering a positive peak
+    [peakStrides, indStrides] = findpeaks(strides(:, peakStrideIter), 'MinPeakProminence', 100, 'MinPeakHeight', positive_peak_height, 'MinPeakDistance', 20);
+
+    % Settings for negative peaks
+    negative_peak_height = 2600; % Threshold for considering a negative peak
+    [negPeakStrides, negIndStrides] = findpeaks(-strides(:, peakStrideIter), 'MinPeakProminence', 125, 'MinPeakHeight', negative_peak_height); 
+
+    % Restrict analysis to 20 to 80 percent of the strides
+    validNegIndices = (negIndStrides > 0.2 * m) & (negIndStrides < 0.8 * m);
+    negPeakStrides = negPeakStrides(validNegIndices);
+    negIndStrides = negIndStrides(validNegIndices);
+
+    % Handling different cases based on peaks found
+    if isempty(peakStrides) && isempty(negPeakStrides)
+        % Both peakStrides and negPeakStrides are empty
+        continue;
+    elseif isempty(peakStrides) || isempty(negPeakStrides)
+        if isempty(peakStrides) && ~isempty(negPeakStrides)
+            features(peakStrideIter, 3) = negIndStrides(1);
+        elseif ~isempty(peakStrides)
+            features(peakStrideIter, 1) = indStrides(1); % Handle single positive peak scenario
+            features(peakStrideIter, 4) = max(peakStrides);
+        end
+    else
+        % Assign indices and magnitudes to features based on conditions
+        features(peakStrideIter, 1) = indStrides(1); % First positive peak index
+        if length(peakStrides) > 1
+            features(peakStrideIter, 2) = indStrides(2); % Second positive peak index, if exists
+        end
+        features(peakStrideIter, 3) = negIndStrides(1); % First negative peak index
+        features(peakStrideIter, 4) = max(peakStrides); % Maximum peak magnitude
+    end
+end
+
 
 %% Features matrix:
 % % Column         Content
@@ -856,92 +451,7 @@ legend('Filtered Gyro Y', 'Standard Deviation', 'Dynamic Threshold', 'Activity S
 % %   3      1st Negative Peak Index
 % %   4      Max Magnitude of the Positive Peak
 
-
-%% Feature Extraction
-
-% peakStrideIter = 0;
-% 
-% [m,n] = size(strides);
-% 
-% peakStridesMegnitude = zeros(n, 1); % For storing the magnitude of the peaks
-% 
-% features = zeros(n,3);
-% 
-% for peakStrideIter = 1:n 
-% %     Original tuning values used by Alysson
-%     % [peakStrides,indStrides] = findpeaks(strides(:,peakStrideIter),'MinPeakProminence',100,'MinPeakHeight',50,'MinPeakDistance',20);
-% 
-%     positive_peak_height = 2000; % Threshold for considering a positive peak
-%     [peakStrides,indStrides] = findpeaks(strides(:,peakStrideIter),'MinPeakProminence',100,'MinPeakHeight',positive_peak_height,'MinPeakDistance',20);
-% 
-%     % Storing values of peakStrides for checking stride is Running or
-%     % Stairs Ascent
-%     % Calculate the magnitude as the maximum value of peakStrides
-%     % if ~isempty(peakStrides)
-%     %     peakStridesMegnitude(peakStrideIter) = max(peakStrides);
-%     % end
-% 
-%     % downstairs 1st and second peak and stair ascent and walking
-%     % [peakStrides,indStrides] = findpeaks(strides(:,peakStrideIter),'MinPeakProminence',10,'MinPeakHeight',20,'MinPeakDistance',20);
-% 
-% %     Original tuning values used by Alysson  
-% %     [negPeakStrides,negIndStrides] = findpeaks(-strides(:,peakStrideIter),'MinPeakProminence',125,'MinPeakHeight',20); 
-% 
-%     % walking 2nd peak negative
-%     % 2800 works good with Stairs Descent
-%     % 2600 for walking. Also good for Stairs Descent (might have to design
-%     % the algorithm to classify as Descent when two positive peaks are
-%     % found
-% 
-%     negative_peak_height = 2600; % Threshold for considering a negative peak
-%     [negPeakStrides,negIndStrides] = findpeaks(-strides(:,peakStrideIter),'MinPeakProminence',125,'MinPeakHeight',negative_peak_height); 
-% 
-%     % Restricting the analysis from 20 to 80 percent of the strides
-%     % original is set at 125 for both 
-%     negPeakStrides = negPeakStrides((negIndStrides>20) & (negIndStrides<80));
-%     negIndStrides = negIndStrides((negIndStrides>20) & (negIndStrides<80));
-% 
-%     if isempty(peakStrides) && isempty(negPeakStrides)
-%         % disp("Both peakStrides and negPeakStrides are empty")
-%         continue;
-%     elseif isempty(peakStrides) || isempty(negPeakStrides)
-% %     Checking for empty arrays
-%         if isempty(peakStrides)
-%             if ~isempty(negPeakStrides)
-%                 features(peakStrideIter,3) = negIndStrides(1);
-%             end
-%         else
-%             if length(peakStrides)==1
-%                 features(peakStrideIter,1) = indStrides(1);
-%                 features(peakStrideIter,4) = max(peakStrides);
-% 
-%             else length(peakStrides)>1
-%                 features(peakStrideIter,1) = indStrides(1);
-%                 features(peakStrideIter,2) = indStrides(2);
-%                 features(peakStrideIter,4) = max(peakStrides);
-%             end
-%         end
-%     else
-%         if length(peakStrides)==1
-%                 features(peakStrideIter,1) = indStrides(1);
-%                 features(peakStrideIter,3) = negIndStrides(1);
-%                 features(peakStrideIter,4) = max(peakStrides);
-%             else length(peakStrides)>1
-%                 features(peakStrideIter,1) = indStrides(1);
-%                 features(peakStrideIter,2) = indStrides(2);
-%                 features(peakStrideIter,3) = negIndStrides(1);
-%                 features(peakStrideIter,4) = max(peakStrides);
-%         end
-%     end
-% end
-% 
-% % Features matrix:
-% % Column         Content
-% %   1      1st Positive Peak Index
-% %   2      2nd Positive Peak Index
-% %   3      1st Negative Peak Index
-% %   4      Max Magnitude of the Positive Peak
-% 
+ 
 %% Labelling Data based on Features for training the model
 % % No Activity = 0
 % % 
