@@ -127,8 +127,8 @@ close all;
 % DataFull = readmatrix('Right_180_slow_normal_fast.csv'); 
 
 cd 'C:\Users\shovo\OneDrive - University of Waterloo\Documents\NRE Lab\Mega InTech\Turning_Data\180_varying_speed_stop_before_turns'
-% DataFull = readmatrix('Right_varying_speed_turning.csv');
-DataFull = readmatrix('Left_varying_speed_turning.csv');
+DataFull = readmatrix('Right_varying_speed_turning.csv');
+% DataFull = readmatrix('Left_varying_speed_turning.csv');
 
 % Datafull Field Names and Column No.
 % Packet#	 Month	 Day	 Year	 Hour	 Minute	 Second	 MS	 ACC X	 ACC Y	 ACC Z	 GYR X	 GYR Y	 GYR Z
@@ -156,8 +156,6 @@ filtGyroZ = lowpass(DataGyroZ,2/100);
 
 
 % filtGyroY = lowpass(DataGyroY,5/100);
-
-
 
 
 %% Extracting & plotting gyroscope and accelerometer data 
@@ -293,7 +291,7 @@ for i = 1:length(activity_starts)
 end
 
 
-%% Plotting with Filtered Gyro Z and Gyro Y Data, Activity Segments, Std Dev, and Turn Segments
+%% Plotting Turn Segments with Filtered Gyro Z and Gyro Y Data, Activity Segments and Std Dev of Gyro Z
 
 figure;
 
@@ -339,109 +337,226 @@ activity_no_turns = activity_segments & no_turn_segments;
 filtGyroY_activity_no_turns = filtGyroY(activity_no_turns);
 
 % Optional: Display or analyze the extracted data
-disp('Extracted filtGyroY Data from Activity Segments Without Turns:');
-disp(filtGyroY_activity_no_turns);
+% disp('Extracted filtGyroY Data from Activity Segments Without Turns:');
+% disp(filtGyroY_activity_no_turns);
 
 
-%% Stride Segmentation with Activity Segments Using activity_no_turns
+%% Stride Segmentation with Advanced Filtering
 
-% Define the minimum peak distance
+% Define the minimum peak distance and peak parameters
 min_peak_distance = 60; % Adjust as needed
+peak_params = struct('MinPeakHeight', 200, 'MinPeakProminence', 250, 'MinPeakDistance', min_peak_distance);
 
-% Initialize strides
+% Percentage of strides to discard at the beginning and end
+discard_percentage = 10; % Percentage
+min_strides_discard = 2;  % Minimum number of strides to discard
+max_strides_discard = 5; % Maximum number of strides to discard
+
+% Initialize strides array
 strides = [];
 
-% Recalculate activity_no_turns from DataFull_labeled with no turns
+% Identify activity segments without turns
 activity_no_turns = DataFull_labeled(:, 15) > 0 & DataFull_labeled(:, 17) == 0;
-
-% Identify contiguous blocks of true values in activity_no_turns
 segments = find(diff([0; activity_no_turns; 0]));
 starts = segments(1:2:end);
 ends = segments(2:2:end) - 1;
 
-% Run stride segmentation algorithm only for segments longer than min_peak_distance
+% Process each segment
 for i = 1:length(starts)
     start_idx = starts(i);
     end_idx = ends(i);
 
-    % Extract segment of filtGyroY data for Activity Segments
+    % Extract the segment of filtGyroY data
     filtGyroY_activity_segment = filtGyroY(start_idx:end_idx);
 
-    % Check if the segment is longer than the preset MinPeakDistance
+    % Detect strides (peaks) within the segment
     if length(filtGyroY_activity_segment) >= min_peak_distance
-        % Run stride segmentation algorithm
-        [peak_y, ind_y] = findpeaks(filtGyroY_activity_segment, 'MinPeakHeight', 200, 'MinPeakProminence', 250, 'MinPeakDistance', min_peak_distance);
+        [peak_y, ind_y] = findpeaks(filtGyroY_activity_segment, peak_params);
 
-        % Process peaks within the segment
-        for peakIter = 2:length(peak_y)
-            if ind_y(peakIter) - ind_y(peakIter-1) > 300
-                continue
-            else
-                oneStride = -filtGyroY_activity_segment(ind_y(peakIter-1):ind_y(peakIter));
+        % Determine the number of strides to discard based on settings
+        total_strides = length(peak_y);
+        num_discard = max(min_strides_discard, min(max_strides_discard, round(discard_percentage / 100 * total_strides)));
 
-                % Normalizing the data and the stride times
-                originalFs = length(oneStride);
-                desiredFs = 100;
-                [p, q] = rat(desiredFs/originalFs);
-                oneStride = resample(oneStride, p, q)';
+        % Adjust indices to keep
+        valid_indices = (num_discard + 1):(total_strides - num_discard);
 
-                % Append oneStride to strides matrix
-                strides(:, end+1) = oneStride;
+        % Extract and process valid strides
+        for peakIter = 2:length(valid_indices)
+            current_index = valid_indices(peakIter);
+            previous_index = valid_indices(peakIter - 1);
+            oneStride = -filtGyroY_activity_segment(ind_y(previous_index):ind_y(current_index));
+
+            % Normalizing the data and the stride times
+            originalFs = length(oneStride);
+            desiredFs = 100;
+            [p, q] = rat(desiredFs/originalFs);
+            oneStride = resample(oneStride, p, q)';
+
+            % Append oneStride to strides matrix
+            strides(:, end+1) = oneStride;
+        end
+    end
+end
+
+% Optional: Plot the strides if needed
+figure;
+plot(strides);
+title('Valid Strides Extracted');
+xlabel('Sample Points');
+ylabel('Stride Signal Amplitude');
+
+
+%% Enhanced Visualization of Stride Extraction
+
+figure;
+hold on;
+
+% Color setup for clarity
+color_segment = [0.8, 0.8, 0.8];  % Light grey for the segment data
+color_stride = [0, 0.5, 0];  % Dark green for the valid strides
+
+% Process each segment for visualization
+for i = 1:length(starts)
+    start_idx = starts(i);
+    end_idx = ends(i);
+
+    % Extract the segment of filtGyroY data
+    filtGyroY_activity_segment = filtGyroY(start_idx:end_idx);
+    t_segment = linspace(start_idx, end_idx, length(filtGyroY_activity_segment));
+
+    % Plot the entire segment in a lighter color
+    plot(t_segment, -filtGyroY_activity_segment, 'Color', color_segment, 'LineWidth', 2);
+
+    % Detect strides within the segment
+    if length(filtGyroY_activity_segment) >= min_peak_distance
+        [peak_y, ind_y] = findpeaks(filtGyroY_activity_segment, peak_params);
+        total_strides = length(peak_y);
+        num_discard = max(min_strides_discard, min(max_strides_discard, round(discard_percentage / 100 * total_strides)));
+        valid_indices = (num_discard + 1):(total_strides - num_discard);
+
+        % Plot valid strides
+        if ~isempty(valid_indices)
+            for peakIter = 2:length(valid_indices)
+                current_index = valid_indices(peakIter);
+                previous_index = valid_indices(peakIter - 1);
+
+                % Extract stride data
+                stride_data = -filtGyroY_activity_segment(ind_y(previous_index):ind_y(current_index));
+                t_stride = linspace(start_idx + ind_y(previous_index), start_idx + ind_y(current_index), length(stride_data));
+
+                % Plot stride
+                plot(t_stride, stride_data, 'Color', color_stride, 'LineWidth', 2, 'Marker', 'o', 'MarkerFaceColor', color_stride);
             end
         end
     end
 end
 
-% Plot the strides if needed
-figure;
-plot(strides);
+hold off;
+xlabel('Sample Number');
+ylabel('filtGyroY Amplitude');
+title('Visualization of Filtered GyroY Activity Segments and Extracted Strides');
+legend('Segment Data', 'Extracted Strides');
+
+
+%% Stride Segmentation with Activity Segments Using activity_no_turns
+ 
+% % Define the minimum peak distance
+% min_peak_distance = 60; % Adjust as needed
+% 
+% % Initialize strides
+% strides = [];
+% 
+% % Recalculate activity_no_turns from DataFull_labeled with no turns
+% activity_no_turns = DataFull_labeled(:, 15) > 0 & DataFull_labeled(:, 17) == 0;
+% 
+% % Identify contiguous blocks of true values in activity_no_turns
+% segments = find(diff([0; activity_no_turns; 0]));
+% starts = segments(1:2:end);
+% ends = segments(2:2:end) - 1;
+% 
+% % Run stride segmentation algorithm only for segments longer than min_peak_distance
+% for i = 1:length(starts)
+%     start_idx = starts(i);
+%     end_idx = ends(i);
+% 
+%     % Extract segment of filtGyroY data for Activity Segments
+%     filtGyroY_activity_segment = filtGyroY(start_idx:end_idx);
+% 
+%     % Check if the segment is longer than the preset MinPeakDistance
+%     if length(filtGyroY_activity_segment) >= min_peak_distance
+%         % Run stride segmentation algorithm
+%         [peak_y, ind_y] = findpeaks(filtGyroY_activity_segment, 'MinPeakHeight', 200, 'MinPeakProminence', 250, 'MinPeakDistance', min_peak_distance);
+% 
+%         % Process peaks within the segment
+%         for peakIter = 2:length(peak_y)
+%             if ind_y(peakIter) - ind_y(peakIter-1) > 300
+%                 continue
+%             else
+%                 oneStride = -filtGyroY_activity_segment(ind_y(peakIter-1):ind_y(peakIter));
+% 
+%                 % Normalizing the data and the stride times
+%                 originalFs = length(oneStride);
+%                 desiredFs = 100;
+%                 [p, q] = rat(desiredFs/originalFs);
+%                 oneStride = resample(oneStride, p, q)';
+% 
+%                 % Append oneStride to strides matrix
+%                 strides(:, end+1) = oneStride;
+%             end
+%         end
+%     end
+% end
+% 
+% % Plot the strides if needed
+% figure;
+% plot(strides);
 
 
 %% Feature Extraction for Activity Segments
 
-peakStrideIter = 0;
-
-[m,n] = size(strides);
-
-peakStridesMagnitude = zeros(n, 1); % For storing the magnitude of the peaks
-
-features = zeros(n,4); % Adjust the feature array size to include all necessary features
-
-for peakStrideIter = 1:n 
-    % Settings for positive peaks
-    positive_peak_height = 2000; % Threshold for considering a positive peak
-    [peakStrides, indStrides] = findpeaks(strides(:, peakStrideIter), 'MinPeakProminence', 100, 'MinPeakHeight', positive_peak_height, 'MinPeakDistance', 20);
-
-    % Settings for negative peaks
-    negative_peak_height = 2600; % Threshold for considering a negative peak
-    [negPeakStrides, negIndStrides] = findpeaks(-strides(:, peakStrideIter), 'MinPeakProminence', 125, 'MinPeakHeight', negative_peak_height); 
-
-    % Restrict analysis to 20 to 80 percent of the strides
-    validNegIndices = (negIndStrides > 0.2 * m) & (negIndStrides < 0.8 * m);
-    negPeakStrides = negPeakStrides(validNegIndices);
-    negIndStrides = negIndStrides(validNegIndices);
-
-    % Handling different cases based on peaks found
-    if isempty(peakStrides) && isempty(negPeakStrides)
-        % Both peakStrides and negPeakStrides are empty
-        continue;
-    elseif isempty(peakStrides) || isempty(negPeakStrides)
-        if isempty(peakStrides) && ~isempty(negPeakStrides)
-            features(peakStrideIter, 3) = negIndStrides(1);
-        elseif ~isempty(peakStrides)
-            features(peakStrideIter, 1) = indStrides(1); % Handle single positive peak scenario
-            features(peakStrideIter, 4) = max(peakStrides);
-        end
-    else
-        % Assign indices and magnitudes to features based on conditions
-        features(peakStrideIter, 1) = indStrides(1); % First positive peak index
-        if length(peakStrides) > 1
-            features(peakStrideIter, 2) = indStrides(2); % Second positive peak index, if exists
-        end
-        features(peakStrideIter, 3) = negIndStrides(1); % First negative peak index
-        features(peakStrideIter, 4) = max(peakStrides); % Maximum peak magnitude
-    end
-end
+% peakStrideIter = 0;
+% 
+% [m,n] = size(strides);
+% 
+% peakStridesMagnitude = zeros(n, 1); % For storing the magnitude of the peaks
+% 
+% features = zeros(n,4); % Adjust the feature array size to include all necessary features
+% 
+% for peakStrideIter = 1:n 
+%     % Settings for positive peaks
+%     positive_peak_height = 2000; % Threshold for considering a positive peak
+%     [peakStrides, indStrides] = findpeaks(strides(:, peakStrideIter), 'MinPeakProminence', 100, 'MinPeakHeight', positive_peak_height, 'MinPeakDistance', 20);
+% 
+%     % Settings for negative peaks
+%     negative_peak_height = 2600; % Threshold for considering a negative peak
+%     [negPeakStrides, negIndStrides] = findpeaks(-strides(:, peakStrideIter), 'MinPeakProminence', 125, 'MinPeakHeight', negative_peak_height); 
+% 
+%     % Restrict analysis to 20 to 80 percent of the strides
+%     validNegIndices = (negIndStrides > 0.2 * m) & (negIndStrides < 0.8 * m);
+%     negPeakStrides = negPeakStrides(validNegIndices);
+%     negIndStrides = negIndStrides(validNegIndices);
+% 
+%     % Handling different cases based on peaks found
+%     if isempty(peakStrides) && isempty(negPeakStrides)
+%         % Both peakStrides and negPeakStrides are empty
+%         continue;
+%     elseif isempty(peakStrides) || isempty(negPeakStrides)
+%         if isempty(peakStrides) && ~isempty(negPeakStrides)
+%             features(peakStrideIter, 3) = negIndStrides(1);
+%         elseif ~isempty(peakStrides)
+%             features(peakStrideIter, 1) = indStrides(1); % Handle single positive peak scenario
+%             features(peakStrideIter, 4) = max(peakStrides);
+%         end
+%     else
+%         % Assign indices and magnitudes to features based on conditions
+%         features(peakStrideIter, 1) = indStrides(1); % First positive peak index
+%         if length(peakStrides) > 1
+%             features(peakStrideIter, 2) = indStrides(2); % Second positive peak index, if exists
+%         end
+%         features(peakStrideIter, 3) = negIndStrides(1); % First negative peak index
+%         features(peakStrideIter, 4) = max(peakStrides); % Maximum peak magnitude
+%     end
+% end
 
 
 %% Features matrix:
@@ -627,28 +742,3 @@ end
 % end
 % 
 % plot(visualLabel);
-
-%% Further visualization
-
-
-
-
-
-
-
-%% Functions initialized
-
-% Function to merge adjacent segments below the minimum length threshold
-function merged_segments = merge_segments(segments, min_length)
-    merged_segments = [];
-    if ~isempty(segments)
-        merged_segments = segments(1, :);
-        for i = 2:size(segments, 1)
-            if segments(i, 1) - merged_segments(end, 2) <= min_length
-                merged_segments(end, 2) = segments(i, 2);
-            else
-                merged_segments = [merged_segments; segments(i, :)];
-            end
-        end
-    end
-end
